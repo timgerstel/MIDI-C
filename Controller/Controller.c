@@ -11,7 +11,7 @@ int main(void){
 	
 	if((PINA & 0x04) && !(PINA & 0x02)) //Record Mode
 		{
-			PORTB = 0x01; 
+			//PORTB = 0x01; 
 		}
 	if((PINA & 0x02) && !(PINA & 0x04)) // Play Mode
 		{ 	
