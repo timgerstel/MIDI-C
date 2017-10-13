@@ -1,9 +1,7 @@
 #include<io.h>
 #include<util/delay.h>
 
-//PB4 = record
-//PB2 = PLAY
-// PB1 = Modify
+
 int main(void){
     DDRB = 0xFF;  //Set outputs
 	DDRA = 0x00;  //Set inputs
