@@ -8,17 +8,17 @@ int main(void){
 	PORTB = 0x00; //Turns all leds off
 	PORTA = 0x07; // sets inputs to return 5v on PA0, PA1, PA2
     while(1){
+		uint8_t rec = PINA & 0x04;
+		uint8_t play = PINA & 0x02;
+		uint8_t mod = PINA & 0x01;
 	
-	if((PINA & 0x04) && !(PINA & 0x02)) //Record Mode
-		{
-			//PORTB = 0x01; 
-		}
-	if((PINA & 0x02) && !(PINA & 0x04)) // Play Mode
-		{ 	
-			if (PINA & 0x01){ // Modify Mode
-				PORTB = 0x04;
+		if(rec && !play){
+			record();
+		} else if (play && !rec){
+			if (mod){ // Modify Mode
+				modify();
 			}else{
-				PORTB = 0x02;
+				playBack();
 			}	
 		}
 	
@@ -28,4 +28,16 @@ int main(void){
 		PORTB = 0x00;
 		}
     }
+}
+
+void record(){
+	PORTB = 0x01; 
+}
+
+void playBack(){
+	PORTB = 0x02;
+}
+
+void modify(){
+	PORTB = 0x04;
 }
