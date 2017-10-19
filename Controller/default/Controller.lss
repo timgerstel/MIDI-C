@@ -3,49 +3,53 @@ Controller.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         000000bc  00000000  00000000  00000054  2**1
+  0 .text         0000019a  00000000  00000000  00000074  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .debug_aranges 00000020  00000000  00000000  00000110  2**0
+  1 .bss          00000004  00800060  00800060  0000020e  2**0
+                  ALLOC
+  2 .debug_aranges 00000020  00000000  00000000  0000020e  2**0
                   CONTENTS, READONLY, DEBUGGING
-  2 .debug_pubnames 0000003e  00000000  00000000  00000130  2**0
+  3 .debug_pubnames 0000006e  00000000  00000000  0000022e  2**0
                   CONTENTS, READONLY, DEBUGGING
-  3 .debug_info   0000012b  00000000  00000000  0000016e  2**0
+  4 .debug_info   00000203  00000000  00000000  0000029c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  4 .debug_abbrev 000000a0  00000000  00000000  00000299  2**0
+  5 .debug_abbrev 00000163  00000000  00000000  0000049f  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_line   00000166  00000000  00000000  00000339  2**0
+  6 .debug_line   0000032c  00000000  00000000  00000602  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_frame  00000050  00000000  00000000  000004a0  2**2
+  7 .debug_frame  00000070  00000000  00000000  00000930  2**2
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_str    00000095  00000000  00000000  000004f0  2**0
+  8 .debug_str    00000123  00000000  00000000  000009a0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_ranges 00000048  00000000  00000000  00000585  2**0
+  9 .debug_loc    0000007c  00000000  00000000  00000ac3  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000078  00000000  00000000  00000b3f  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
 
 00000000 <__vectors>:
    0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
-   4:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
-   8:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
-   c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
-  10:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
-  14:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
-  18:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
-  1c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
-  20:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
-  24:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
-  28:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
-  2c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
-  30:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
-  34:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
-  38:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
-  3c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
-  40:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
-  44:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
-  48:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
-  4c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
-  50:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   4:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+   8:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+   c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  10:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  14:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  18:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  1c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  20:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  24:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  28:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  2c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  30:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  34:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  38:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  3c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  40:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  44:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  48:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  4c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  50:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
 
 00000054 <__ctors_end>:
   54:	11 24       	eor	r1, r1
@@ -54,139 +58,348 @@ Disassembly of section .text:
   5a:	d8 e0       	ldi	r29, 0x08	; 8
   5c:	de bf       	out	0x3e, r29	; 62
   5e:	cd bf       	out	0x3d, r28	; 61
-  60:	0e 94 36 00 	call	0x6c	; 0x6c <main>
-  64:	0c 94 5c 00 	jmp	0xb8	; 0xb8 <_exit>
 
-00000068 <__bad_interrupt>:
-  68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+00000060 <__do_clear_bss>:
+  60:	10 e0       	ldi	r17, 0x00	; 0
+  62:	a0 e6       	ldi	r26, 0x60	; 96
+  64:	b0 e0       	ldi	r27, 0x00	; 0
+  66:	01 c0       	rjmp	.+2      	; 0x6a <.do_clear_bss_start>
 
-0000006c <main>:
-#include<io.h>
+00000068 <.do_clear_bss_loop>:
+  68:	1d 92       	st	X+, r1
+
+0000006a <.do_clear_bss_start>:
+  6a:	a4 36       	cpi	r26, 0x64	; 100
+  6c:	b1 07       	cpc	r27, r17
+  6e:	e1 f7       	brne	.-8      	; 0x68 <.do_clear_bss_loop>
+  70:	0e 94 ac 00 	call	0x158	; 0x158 <main>
+  74:	0c 94 cb 00 	jmp	0x196	; 0x196 <_exit>
+
+00000078 <__bad_interrupt>:
+  78:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000007c <ReadADC>:
+    }
+}
+
+uint16_t ReadADC(){
+	//Start a single conversion
+	ADCSRA |= (1 << ADSC);
+  7c:	36 9a       	sbi	0x06, 6	; 6
+
+	//Wait for conversion to complete
+	while(!(ADCSRA & (1<<ADIF)));
+  7e:	34 9b       	sbis	0x06, 4	; 6
+  80:	fe cf       	rjmp	.-4      	; 0x7e <ReadADC+0x2>
+
+	//clear data (conversion is complete)
+	ADCSRA |= (1 << ADIF);
+  82:	34 9a       	sbi	0x06, 4	; 6
+
+	return(ADC);
+  84:	24 b1       	in	r18, 0x04	; 4
+  86:	35 b1       	in	r19, 0x05	; 5
+}
+  88:	c9 01       	movw	r24, r18
+  8a:	08 95       	ret
+
+0000008c <Wait>:
+
+void Wait()
+{
+  8c:	20 e0       	ldi	r18, 0x00	; 0
+    milliseconds can be achieved.
+ */
+void
+_delay_loop_2(uint16_t __count)
+{
+	__asm__ volatile (
+  8e:	40 e0       	ldi	r20, 0x00	; 0
+  90:	50 e0       	ldi	r21, 0x00	; 0
+  92:	ca 01       	movw	r24, r20
+  94:	01 97       	sbiw	r24, 0x01	; 1
+  96:	f1 f7       	brne	.-4      	; 0x94 <Wait+0x8>
+   uint8_t i;
+   for(i=0;i<20;i++)
+  98:	2f 5f       	subi	r18, 0xFF	; 255
+  9a:	24 31       	cpi	r18, 0x14	; 20
+  9c:	d1 f7       	brne	.-12     	; 0x92 <Wait+0x6>
+      _delay_loop_2(0);
+}
+  9e:	08 95       	ret
+
+000000a0 <record>:
+
+void record(){
+	PORTB = 0x01; 
+  a0:	81 e0       	ldi	r24, 0x01	; 1
+  a2:	88 bb       	out	0x18, r24	; 24
+}
+  a4:	08 95       	ret
+
+000000a6 <playBack>:
+
+void playBack(){
+	PORTB = 0x02;
+  a6:	82 e0       	ldi	r24, 0x02	; 2
+  a8:	88 bb       	out	0x18, r24	; 24
+}
+  aa:	08 95       	ret
+
+000000ac <modify>:
+
+void modify(){
+  ac:	9f 92       	push	r9
+  ae:	af 92       	push	r10
+  b0:	bf 92       	push	r11
+  b2:	cf 92       	push	r12
+  b4:	df 92       	push	r13
+  b6:	ef 92       	push	r14
+  b8:	ff 92       	push	r15
+  ba:	0f 93       	push	r16
+  bc:	1f 93       	push	r17
+  be:	cf 93       	push	r28
+  c0:	df 93       	push	r29
+	//PORTB = 0x04;
+	TCCR0 = (1 << WGM01) | (1 << CS02) | (1 << CS00); // Sets CTC mode for clock and sets prescaler to clk/1024
+  c2:	8d e0       	ldi	r24, 0x0D	; 13
+  c4:	83 bf       	out	0x33, r24	; 51
+	OCR0 = 39; // every 39 ticks = .01 miliseconds (comparsion variable)
+  c6:	87 e2       	ldi	r24, 0x27	; 39
+  c8:	8c bf       	out	0x3c, r24	; 60
+	TIMSK = (1 << OCIE0); // Set an interput whenver the ticks and my comarsion variable matchs)
+  ca:	82 e0       	ldi	r24, 0x02	; 2
+  cc:	89 bf       	out	0x39, r24	; 57
+	sei(); // needed to set interrupts
+  ce:	78 94       	sei
+
+	ADMUX = (1 << REFS0) | (1<< MUX0) | (1<< MUX1) | (1<< MUX2); // sets the analog input of the photosensor to 0-5v, sets to look at the 7th analog pin.
+  d0:	87 e4       	ldi	r24, 0x47	; 71
+  d2:	87 b9       	out	0x07, r24	; 7
+	ADCSRA =  (1 << ADEN) | (1<< ADPS2) | (1<< ADPS1) | (1<< ADPS0); // ADEN turns ADC on; ADPS sets prescaler to 128;
+  d4:	87 e8       	ldi	r24, 0x87	; 135
+  d6:	86 b9       	out	0x06, r24	; 6
+	uint16_t adc_value;
+    while(1){	
+		adc_value = ReadADC();
+		if (adc_value > 30){
+			PORTB = (1 << PORTB0);
+  d8:	99 24       	eor	r9, r9
+  da:	93 94       	inc	r9
+		}
+		if (adc_value > 60){
+			PORTB = (1 << PORTB1);
+  dc:	52 e0       	ldi	r21, 0x02	; 2
+  de:	a5 2e       	mov	r10, r21
+		}
+		if (adc_value > 90){
+			PORTB = (1 << PORTB2);
+  e0:	44 e0       	ldi	r20, 0x04	; 4
+  e2:	b4 2e       	mov	r11, r20
+		}
+		if (adc_value > 120){
+			PORTB = (1 << PORTB3);
+  e4:	38 e0       	ldi	r19, 0x08	; 8
+  e6:	c3 2e       	mov	r12, r19
+		}
+		if (adc_value > 150){
+			PORTB = (1 << PORTB4);
+  e8:	20 e1       	ldi	r18, 0x10	; 16
+  ea:	d2 2e       	mov	r13, r18
+		}
+		if (adc_value > 180){
+			PORTB = (1 << PORTB5);
+  ec:	90 e2       	ldi	r25, 0x20	; 32
+  ee:	e9 2e       	mov	r14, r25
+		}
+		if (adc_value > 210){
+			PORTB = (1 << PORTB6);
+  f0:	80 e4       	ldi	r24, 0x40	; 64
+  f2:	f8 2e       	mov	r15, r24
+		}
+		if (adc_value > 240){
+			PORTB = (1 << PORTB7);
+  f4:	00 e8       	ldi	r16, 0x80	; 128
+		}
+		if (adc_value >= 240){
+			PORTB = 0xFF;
+  f6:	1f ef       	ldi	r17, 0xFF	; 255
+  f8:	c0 e0       	ldi	r28, 0x00	; 0
+  fa:	d0 e0       	ldi	r29, 0x00	; 0
+
+	ADMUX = (1 << REFS0) | (1<< MUX0) | (1<< MUX1) | (1<< MUX2); // sets the analog input of the photosensor to 0-5v, sets to look at the 7th analog pin.
+	ADCSRA =  (1 << ADEN) | (1<< ADPS2) | (1<< ADPS1) | (1<< ADPS0); // ADEN turns ADC on; ADPS sets prescaler to 128;
+	uint16_t adc_value;
+    while(1){	
+		adc_value = ReadADC();
+  fc:	0e 94 3e 00 	call	0x7c	; 0x7c <ReadADC>
+		if (adc_value > 30){
+ 100:	8f 31       	cpi	r24, 0x1F	; 31
+ 102:	91 05       	cpc	r25, r1
+ 104:	e8 f0       	brcs	.+58     	; 0x140 <modify+0x94>
+			PORTB = (1 << PORTB0);
+ 106:	98 ba       	out	0x18, r9	; 24
+		}
+		if (adc_value > 60){
+ 108:	8d 33       	cpi	r24, 0x3D	; 61
+ 10a:	91 05       	cpc	r25, r1
+ 10c:	c8 f0       	brcs	.+50     	; 0x140 <modify+0x94>
+			PORTB = (1 << PORTB1);
+ 10e:	a8 ba       	out	0x18, r10	; 24
+		}
+		if (adc_value > 90){
+ 110:	8b 35       	cpi	r24, 0x5B	; 91
+ 112:	91 05       	cpc	r25, r1
+ 114:	a8 f0       	brcs	.+42     	; 0x140 <modify+0x94>
+			PORTB = (1 << PORTB2);
+ 116:	b8 ba       	out	0x18, r11	; 24
+		}
+		if (adc_value > 120){
+ 118:	89 37       	cpi	r24, 0x79	; 121
+ 11a:	91 05       	cpc	r25, r1
+ 11c:	88 f0       	brcs	.+34     	; 0x140 <modify+0x94>
+			PORTB = (1 << PORTB3);
+ 11e:	c8 ba       	out	0x18, r12	; 24
+		}
+		if (adc_value > 150){
+ 120:	87 39       	cpi	r24, 0x97	; 151
+ 122:	91 05       	cpc	r25, r1
+ 124:	68 f0       	brcs	.+26     	; 0x140 <modify+0x94>
+			PORTB = (1 << PORTB4);
+ 126:	d8 ba       	out	0x18, r13	; 24
+		}
+		if (adc_value > 180){
+ 128:	85 3b       	cpi	r24, 0xB5	; 181
+ 12a:	91 05       	cpc	r25, r1
+ 12c:	48 f0       	brcs	.+18     	; 0x140 <modify+0x94>
+			PORTB = (1 << PORTB5);
+ 12e:	e8 ba       	out	0x18, r14	; 24
+		}
+		if (adc_value > 210){
+ 130:	83 3d       	cpi	r24, 0xD3	; 211
+ 132:	91 05       	cpc	r25, r1
+ 134:	28 f0       	brcs	.+10     	; 0x140 <modify+0x94>
+			PORTB = (1 << PORTB6);
+ 136:	f8 ba       	out	0x18, r15	; 24
+		}
+		if (adc_value > 240){
+ 138:	81 3f       	cpi	r24, 0xF1	; 241
+ 13a:	91 05       	cpc	r25, r1
+ 13c:	08 f0       	brcs	.+2      	; 0x140 <modify+0x94>
+			PORTB = (1 << PORTB7);
+ 13e:	08 bb       	out	0x18, r16	; 24
+		}
+		if (adc_value >= 240){
+ 140:	80 3f       	cpi	r24, 0xF0	; 240
+ 142:	91 05       	cpc	r25, r1
+ 144:	08 f0       	brcs	.+2      	; 0x148 <modify+0x9c>
+			PORTB = 0xFF;
+ 146:	18 bb       	out	0x18, r17	; 24
+ 148:	20 e0       	ldi	r18, 0x00	; 0
+ 14a:	ce 01       	movw	r24, r28
+ 14c:	01 97       	sbiw	r24, 0x01	; 1
+ 14e:	f1 f7       	brne	.-4      	; 0x14c <modify+0xa0>
+}
+
+void Wait()
+{
+   uint8_t i;
+   for(i=0;i<20;i++)
+ 150:	2f 5f       	subi	r18, 0xFF	; 255
+ 152:	24 31       	cpi	r18, 0x14	; 20
+ 154:	99 f2       	breq	.-90     	; 0xfc <modify+0x50>
+ 156:	f9 cf       	rjmp	.-14     	; 0x14a <modify+0x9e>
+
+00000158 <main>:
 #include<util/delay.h>
+#include<interrupt.h>
 
+int extraTime = 0, whichLED = 0;
 
 int main(void){
+ 158:	0f 93       	push	r16
+ 15a:	1f 93       	push	r17
     DDRB = 0xFF;  //Set outputs
-  6c:	8f ef       	ldi	r24, 0xFF	; 255
-  6e:	87 bb       	out	0x17, r24	; 23
+ 15c:	8f ef       	ldi	r24, 0xFF	; 255
+ 15e:	87 bb       	out	0x17, r24	; 23
 	DDRA = 0x00;  //Set inputs
-  70:	1a ba       	out	0x1a, r1	; 26
+ 160:	1a ba       	out	0x1a, r1	; 26
 	PORTB = 0x00; //Turns all leds off
-  72:	18 ba       	out	0x18, r1	; 24
+ 162:	18 ba       	out	0x18, r1	; 24
 	PORTA = 0x07; // sets inputs to return 5v on PA0, PA1, PA2
-  74:	87 e0       	ldi	r24, 0x07	; 7
-  76:	8b bb       	out	0x1b, r24	; 27
-		}
-    }
+ 164:	87 e0       	ldi	r24, 0x07	; 7
+ 166:	8b bb       	out	0x1b, r24	; 27
+   for(i=0;i<20;i++)
+      _delay_loop_2(0);
 }
 
 void record(){
 	PORTB = 0x01; 
-  78:	51 e0       	ldi	r21, 0x01	; 1
+ 168:	01 e0       	ldi	r16, 0x01	; 1
 }
 
 void playBack(){
 	PORTB = 0x02;
-  7a:	42 e0       	ldi	r20, 0x02	; 2
-}
-
-void modify(){
-	PORTB = 0x04;
-  7c:	34 e0       	ldi	r19, 0x04	; 4
+ 16a:	12 e0       	ldi	r17, 0x02	; 2
     DDRB = 0xFF;  //Set outputs
 	DDRA = 0x00;  //Set inputs
 	PORTB = 0x00; //Turns all leds off
 	PORTA = 0x07; // sets inputs to return 5v on PA0, PA1, PA2
     while(1){
 		uint8_t rec = PINA & 0x04;
-  7e:	89 b3       	in	r24, 0x19	; 25
+ 16c:	89 b3       	in	r24, 0x19	; 25
 		uint8_t play = PINA & 0x02;
-  80:	99 b3       	in	r25, 0x19	; 25
-  82:	92 70       	andi	r25, 0x02	; 2
+ 16e:	99 b3       	in	r25, 0x19	; 25
+ 170:	92 70       	andi	r25, 0x02	; 2
 		uint8_t mod = PINA & 0x01;
-  84:	29 b3       	in	r18, 0x19	; 25
+ 172:	29 b3       	in	r18, 0x19	; 25
 	
 		if(rec && !play){
-  86:	82 ff       	sbrs	r24, 2
-  88:	04 c0       	rjmp	.+8      	; 0x92 <main+0x26>
-  8a:	99 23       	and	r25, r25
-  8c:	51 f4       	brne	.+20     	; 0xa2 <main+0x36>
-		}
-    }
+ 174:	82 ff       	sbrs	r24, 2
+ 176:	04 c0       	rjmp	.+8      	; 0x180 <main+0x28>
+ 178:	99 23       	and	r25, r25
+ 17a:	59 f4       	brne	.+22     	; 0x192 <main+0x3a>
+   for(i=0;i<20;i++)
+      _delay_loop_2(0);
 }
 
 void record(){
 	PORTB = 0x01; 
-  8e:	58 bb       	out	0x18, r21	; 24
-  90:	f6 cf       	rjmp	.-20     	; 0x7e <main+0x12>
+ 17c:	08 bb       	out	0x18, r16	; 24
+ 17e:	f6 cf       	rjmp	.-20     	; 0x16c <main+0x14>
 		uint8_t play = PINA & 0x02;
 		uint8_t mod = PINA & 0x01;
 	
 		if(rec && !play){
 			record();
 		} else if (play && !rec){
-  92:	99 23       	and	r25, r25
-  94:	31 f0       	breq	.+12     	; 0xa2 <main+0x36>
+ 180:	99 23       	and	r25, r25
+ 182:	39 f0       	breq	.+14     	; 0x192 <main+0x3a>
 			if (mod){ // Modify Mode
-  96:	20 ff       	sbrs	r18, 0
-  98:	02 c0       	rjmp	.+4      	; 0x9e <main+0x32>
-void playBack(){
-	PORTB = 0x02;
-}
-
-void modify(){
-	PORTB = 0x04;
-  9a:	38 bb       	out	0x18, r19	; 24
-  9c:	f0 cf       	rjmp	.-32     	; 0x7e <main+0x12>
+ 184:	20 ff       	sbrs	r18, 0
+ 186:	03 c0       	rjmp	.+6      	; 0x18e <main+0x36>
+				modify();
+ 188:	0e 94 56 00 	call	0xac	; 0xac <modify>
+ 18c:	ef cf       	rjmp	.-34     	; 0x16c <main+0x14>
 void record(){
 	PORTB = 0x01; 
 }
 
 void playBack(){
 	PORTB = 0x02;
-  9e:	48 bb       	out	0x18, r20	; 24
-  a0:	ee cf       	rjmp	.-36     	; 0x7e <main+0x12>
+ 18e:	18 bb       	out	0x18, r17	; 24
+ 190:	ed cf       	rjmp	.-38     	; 0x16c <main+0x14>
 		}
 	
 	 
 		else // if all off, leds are off
 		{
 		PORTB = 0x00;
-  a2:	18 ba       	out	0x18, r1	; 24
-  a4:	ec cf       	rjmp	.-40     	; 0x7e <main+0x12>
+ 192:	18 ba       	out	0x18, r1	; 24
+ 194:	eb cf       	rjmp	.-42     	; 0x16c <main+0x14>
 
-000000a6 <record>:
-		}
-    }
-}
+00000196 <_exit>:
+ 196:	f8 94       	cli
 
-void record(){
-	PORTB = 0x01; 
-  a6:	81 e0       	ldi	r24, 0x01	; 1
-  a8:	88 bb       	out	0x18, r24	; 24
-}
-  aa:	08 95       	ret
-
-000000ac <playBack>:
-
-void playBack(){
-	PORTB = 0x02;
-  ac:	82 e0       	ldi	r24, 0x02	; 2
-  ae:	88 bb       	out	0x18, r24	; 24
-}
-  b0:	08 95       	ret
-
-000000b2 <modify>:
-
-void modify(){
-	PORTB = 0x04;
-  b2:	84 e0       	ldi	r24, 0x04	; 4
-  b4:	88 bb       	out	0x18, r24	; 24
-}
-  b6:	08 95       	ret
-
-000000b8 <_exit>:
-  b8:	f8 94       	cli
-
-000000ba <__stop_program>:
-  ba:	ff cf       	rjmp	.-2      	; 0xba <__stop_program>
+00000198 <__stop_program>:
+ 198:	ff cf       	rjmp	.-2      	; 0x198 <__stop_program>

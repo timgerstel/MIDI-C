@@ -46,7 +46,9 @@ OBJECTS = Controller.o
 LINKONLYOBJECTS = 
 
 ## Build
-all: $(TARGET) Controller.hex Controller.eep Controller.lss## Compile
+all: $(TARGET) Controller.hex Controller.eep Controller.lss size
+
+## Compile
 Controller.o: ../Controller.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
@@ -63,6 +65,10 @@ $(TARGET): $(OBJECTS)
 %.lss: $(TARGET)
 	avr-objdump -h -S $< > $@
 
+size: ${TARGET}
+	@echo
+	@avr-size -C --mcu=${MCU} ${TARGET}
+
 ## Clean target
 .PHONY: clean
 clean:
@@ -70,5 +76,5 @@ clean:
 
 
 ## Other dependencies
--include $(shell mkdir dep 2>NUL) $(wildcard dep/*)
+-include $(shell mkdir dep 2>/dev/null) $(wildcard dep/*)
 
