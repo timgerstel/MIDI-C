@@ -1,13 +1,15 @@
 #include<io.h>
 #include<util/delay.h>
 #include<interrupt.h>
+#include<eeprom.h>
 
 
 /***** Define Variables and constants *****/
 
-int extraTime = 0, whichLED = 0, count = 0;
+int extraTime = 0, whichLED = 0, count = 0, notecount = 0;
+unsigned int eeprom_address=0x00;
 uint16_t adc_value;
-#define F_CPU 8000000
+#define F_CPU 4000000
 #define BUAD 31250
 #define BUAD_PRESCALE (((F_CPU / (BUAD * 16UL))) - 1)
 
@@ -40,6 +42,7 @@ unsigned char midi_ReadUCSRC(void);
 void EEPROM_write(unsigned int uiAddress, unsigned char ucData);
 unsigned char EEPROM_read(unsigned int uiAddress);
 void midiReceiveTest();
+void timer500();
 
 
 
@@ -82,10 +85,10 @@ void setupMIDI(unsigned int baudrate){
 	UBRRH = (unsigned char) (baudrate >> 8);
 	UBRRL = (unsigned char) baudrate;
 	UCSRB = (1 << TXEN) | (1 << RXEN);
-	UCSRC = (1 << URSEL )|(1 << USBS) | (3 << UCSZ0); //only use 8 bit words
+	UCSRC = (1 << URSEL )|(0 << USBS) | (3 << UCSZ0); //only use 8 bit words
 }
 void setupPins(){
-	DDRB = 0xFF;  //Set outputs
+	DDRB = 0xFF;  //Set outp1ts
 	DDRA = 0x00;  //Set inputs
 	PORTB = 0x00; //Turns all leds off
 	PORTA = 0x07; // sets inputs to return 5v on PA0, PA1, PA2
@@ -96,10 +99,9 @@ void setupAnalog(){
 	ADCSRA =  (1 << ADEN) | (1<< ADPS2) | (1<< ADPS1) | (1<< ADPS0); // ADEN turns ADC on; ADPS sets prescaler to 128;
 }
 void setupTimer(){
-	TCCR0 = (1 << WGM01) | (1 << CS02) | (1 << CS00); // Sets CTC mode for clock and sets prescaler to clk/1024
-	OCR0 = 78; // every 78 ticks = .01 miliseconds (comparsion variable)
-	TIMSK = (1 << OCIE0); // Set an interput whenver the ticks and my comarsion variable matchs)
-	sei(); // needed to set interrupts
+	TCCR1B = (1 << CS10) | (1 << CS12); //prescaler 1024
+	OCR1A = 1953; // 500ms delay  equation = (500*10^-3/(1/3906.25));
+	TCNT1 = 0;
 }
 
 
@@ -111,9 +113,10 @@ void setupTimer(){
 void record(){
 	 
     //PORTB = 0x01;
-    midiReceiveTest();
+   midiReceiveTest();
 	//midiTransitTest();
 	//midi_Receive();
+	//timer500();
 }
 
 void playBack(){
@@ -125,12 +128,33 @@ void modify(){
 }
 
 void midiReceiveTest(){
+	
 	if((midi_Receive()) != 0 ) {
 		//did I recieve a message? do something!
-		PORTB = 0xFF;	
+		PORTB = midi_Receive();	
 	}
 }
 
+void writeSong(){
+	TIFR |= (1<< OCF1A); //reset timer1 overflow flag
+
+
+	if((midi_Receive()) != 0 ) {
+		EEPROM_write(eeprom_address, midi_Receive());
+		PORTB = midi_Receive();	
+		eeprom_address= eeprom_address + 1;
+		notecount= notecount + 1;
+	}
+}
+
+void playSong(){
+	eeprom_address= 0x00;
+	while(eeprom_address < notecount){
+	midi_Transmit(EEPROM_read(eeprom_address));
+	_delay_ms(300);	
+	}
+	
+}
 void midiTransitTest(){
 	while ((UCSRA & (1 << UDRE)) == 0) {};
 
@@ -151,6 +175,12 @@ void ledOFF(){
 }
 
 
+void timer500(){
+	while((TIFR & (1<<OCF1A)) == 0); // wait for timer overflow flag
+	PORTB ^= (1 << PORTB0);
+	TCNT1 = 0;
+	TIFR |= (1<< OCF1A); //reset timer1 overflow flag
+}
 
 uint16_t ReadADC(){
 	//Start a single conversion
@@ -224,6 +254,32 @@ unsigned char midi_ReadUCSRC(void){
 	return ucsrc;
 }
 
+unsigned int TIM16_ReadTCNT1(void){
+	unsigned char sreg;
+	unsigned char i;
+	/* save gloval interrupt flag */
+	sreg = SREG;
+	/* disable interrupts */
+	cli();
+	/* read TCNT1 into i */
+	i = TCNT1;
+	/* restore global interrupt flag */
+	SREG = sreg;
+	return i;
+}
+
+void TIM16_WriteTCNT1 (unsigned int i){
+	unsigned char sreg;
+	/* save global interrupt flag */
+	sreg = SREG;
+	/* disable interrupts */
+	cli();
+	/* set tcnt1 to i */
+	TCNT1 = i;
+	/* restore global interrupt flag */
+	SREG = sreg;
+}
+
 void EEPROM_write(unsigned int uiAddress, unsigned char ucData){
 	/* wait for completion of previous write */
 	while (EECR & (1 <<EEWE));
@@ -249,46 +305,3 @@ unsigned char EEPROM_read(unsigned int uiAddress){
 }
 
 /***** Timer Interrupts *****/
-
-
-
-/*** Timer test, uses timer to increment 1 LED on per second, resets and does the loop again ***/
-
-/*ISR(TIMER0_COMP_vect){
-
-
-	extraTime++;
-	if(extraTime > 100) // 100 = 1second
-	{
-		whichLED++;
-		PORTB = (1 << PORTB0);
-		//PORTB ^= (1 << PORTB0); //toggles on and off for every cycle.
-		extraTime = 0;
-	}
-	switch(whichLED){
-	case 1:
-		PORTB = (1 << PORTB0) |(1 << PORTB1);
-		break;
-	case 2:
-		PORTB = (1 << PORTB0) | (1 << PORTB1) | (1 << PORTB2);
-		break;
-	case 3:
-		PORTB = (1 << PORTB0) | (1 << PORTB1) | (1 << PORTB2) | (1 << PORTB3);
-		break;
-	case 4:
-		PORTB = (1 << PORTB0) |(1 << PORTB1) | (1 << PORTB2) | (1 << PORTB3) |(1 << PORTB4);
-		break;
-	case 5:
-		PORTB = (1 << PORTB0) |(1 << PORTB1) | (1 << PORTB2) | (1 << PORTB3) |(1 << PORTB4) |(1 << PORTB5);
-		break;
-	case 6:
-		PORTB = (1 << PORTB0) |(1 << PORTB1) | (1 << PORTB2) | (1 << PORTB3) |(1 << PORTB4) |(1 << PORTB5) | (1 << PORTB6);
-		break;
-	case 7:
-		PORTB = (1 << PORTB0) |(1 << PORTB1) | (1 << PORTB2) | (1 << PORTB3) |(1 << PORTB4) |(1 << PORTB5) | (1 << PORTB6) | (1 << PORTB7);
-		break;
-	case 8:
-		whichLED = 0;
-	}
-}
-*/
