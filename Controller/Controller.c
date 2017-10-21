@@ -44,6 +44,8 @@ unsigned char EEPROM_read(unsigned int uiAddress);
 void midiReceiveTest();
 void timer500();
 unsigned char TIM16_ReadTCNT1(void);
+void playSong();
+void playSong2();
 
 
 /***** Main Loop *****/
@@ -100,46 +102,16 @@ void setupTimer(){
 /***** Create Methods *****/
 
 void record(){
-	 
-    //PORTB = 0x01;
-   //midiReceiveTest();
-	T1FR |= (1 << OCF1A); //reset timer1 overflow flag
-	eeprom_address = 0x00;
-	while(midi_Receive() != 0){
-		PORTB = midi_Receive();
-		EEPROM_write(eeprom_address, midi_Receive() + TIM16_ReadTCNT1());
-		eeprom_address++;
-	}
-	stop_addr = eeprom_address;
-	// TIFR |= (1<< OCF1A); //reset timer1 overflow flag
-	// eeprom_address = 0x00;
-	// notecount = 0;
- //   	if(midi_Receive() != 0){
- //   		if(lastNoteTime == 0){
- //   			lastNoteTime = TCNT1;
- //   			EEPROM_write(eeprom_address, midi_Receive());
- //   			PORTB = midi_Receive();
- //   			eeprom_address++;
- //   			notecount++;
- //   		} else {
- //   			int elapsed = TCNT1 - lastNoteTime;
- //   			EEPROM_write(eeprom_address, elapsed);
- //   			eeprom_address++;
- //   			EEPROM_write(eeprom_address, midi_Receive());
- //   			PORTB = midi_Receive();
- //   			eeprom_address++;
- //   			notecount++;
- //   		}
- //   	}
- //   	stop_addr = eprom_address;
+	 writeSong2();
 }
 
 void playBack(){
-	playSong();
+	//playSong();
 }
 
+
 void modify(){
-	analogLEDTest();
+	//analogLEDTest();
 }
 
 void writeSong(){
@@ -165,6 +137,18 @@ void playSong(){
 	}
 	
 }
+
+void writeSong2(){
+//T1FR |= (1 << OCF1A); //reset timer1 overflow flag
+	eeprom_address = 0x00;
+	while(midi_Receive() != 0){
+		PORTB = midi_Receive();
+		//EEPROM_write(eeprom_address, midi_Receive() + TIM16_ReadTCNT1());
+		//eeprom_address++;
+	}
+	//stop_addr = eeprom_address;
+}
+
 void midiTransitTest(){
 	while ((UCSRA & (1 << UDRE)) == 0) {};
 
