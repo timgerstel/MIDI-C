@@ -77,7 +77,7 @@ void record(){
 }
 
 void playBack(){
-	//midiTransitTest();
+	midiTransitTest();
 }
 
 
