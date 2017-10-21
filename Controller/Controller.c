@@ -108,7 +108,7 @@ void setupTimer(){
 /***** Create Methods *****/
 
 void record(){
-	 //writeSong2();
+	 writeSong2();
 }
 
 void playBack(){
@@ -300,9 +300,9 @@ unsigned char EEPROM_read(unsigned int uiAddress){
 }
 
 /***** Timer Interrupts *****/
-
+/*
 ISR(TIMER1_COMPB_vect){
 	PORTB^= 0xFF; // blink
 	TCNT1 = 0; //Reset timer
 }
-
+*/
