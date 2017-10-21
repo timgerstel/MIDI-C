@@ -95,9 +95,14 @@ void setupAnalog(){
 	ADCSRA =  (1 << ADEN) | (1<< ADPS2) | (1<< ADPS1) | (1<< ADPS0); // ADEN turns ADC on; ADPS sets prescaler to 128;
 }
 void setupTimer(){
+	TCCR1A = 0x00; // enable normal mode interrupts
 	TCCR1B = (1 << CS10) | (1 << CS12); //prescaler 1024
+	TIMSK = (1 << OCIE1B);
+	sei();
 	OCR1A = 1953; // 500ms delay  equation = (500*10^-3/(1/3906.25));
+	OCR1B = 3906; // 1000ms Delay
 	TCNT1 = 0;
+
 }
 
 /***** Create Methods *****/
@@ -107,7 +112,7 @@ void record(){
 }
 
 void playBack(){
-	playTimer();
+	//playTimer();
 }
 
 
@@ -295,3 +300,9 @@ unsigned char EEPROM_read(unsigned int uiAddress){
 }
 
 /***** Timer Interrupts *****/
+
+ISR(TIMER1_COMPB_vect){
+	PORTB^= 0xFF; // blink
+	TCNT1 = 0; //Reset timer
+}
+
