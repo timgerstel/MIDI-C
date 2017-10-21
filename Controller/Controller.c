@@ -15,6 +15,8 @@ uint16_t adc_value;
 
 /* Midi test inputs */
 
+unsigned char midiData[8];
+
 int MIDIon = 0b10010000;
 int MIDIb1 = 0b00111100;
 int MIDIb2 = 0b01111111;
@@ -42,7 +44,6 @@ unsigned char midi_ReadUCSRC(void);
 void EEPROM_write(unsigned int uiAddress, unsigned char ucData);
 unsigned char EEPROM_read(unsigned int uiAddress);
 void midiReceiveTest();
-void timer500();
 unsigned char TIM16_ReadTCNT1(void);
 void playSong();
 void playSong2();
@@ -95,6 +96,8 @@ void setupAnalog(){
 }
 void setupTimer(){
 	TCCR1B = (1 << CS10) | (1 << CS12); //prescaler 1024
+	TIMSK = (1 << TOIE1);
+	sei();
 	OCR1A = 1953; // 500ms delay  equation = (500*10^-3/(1/3906.25));
 	TCNT1 = 0;
 }
@@ -102,11 +105,11 @@ void setupTimer(){
 /***** Create Methods *****/
 
 void record(){
-	 writeSong2();
+	 writeSong3();
 }
 
 void playBack(){
-	//playSong();
+	playSong3();
 }
 
 
@@ -138,16 +141,31 @@ void playSong(){
 	
 }
 
-void writeSong2(){
-//T1FR |= (1 << OCF1A); //reset timer1 overflow flag
-	eeprom_address = 0x00;
-	while(midi_Receive() != 0){
-		PORTB = midi_Receive();
-		//EEPROM_write(eeprom_address, midi_Receive() + TIM16_ReadTCNT1());
-		//eeprom_address++;
+void writeSong3(){
+	for(int i =0; i <6; i++){
+		midiData[i] = midi_Receive();
 	}
-	//stop_addr = eeprom_address;
+
+	PORTB = midiData[1];
+	TCNT1 = 0;
+
+	midiData[6] = (TCNT1 >> 8);
+	midiData[7] = (TCNT1 & 0xFF);
+
+	for(int j= 0; j <6; j++){
+		EEPROM_write(eeprom_address, midiData[j]);
+		eeprom_address++;		
+	}	
+
 }
+
+ void playSong3(){
+ 	for(int i =0; i < eeprom_address; i++){
+ 		midi_Transmit(EEPROM_read(i));
+}
+ 
+
+ }
 
 void midiTransitTest(){
 	while ((UCSRA & (1 << UDRE)) == 0) {};
@@ -168,13 +186,6 @@ void ledOFF(){
 	PORTB = 0x00;
 }
 
-
-void timer500(){
-	while((TIFR & (1<<OCF1A)) == 0); // wait for timer overflow flag
-	PORTB ^= (1 << PORTB0);
-	TCNT1 = 0;
-	TIFR |= (1<< OCF1A); //reset timer1 overflow flag
-}
 
 uint16_t ReadADC(){
 	//Start a single conversion
@@ -227,7 +238,7 @@ void midi_Transmit( unsigned char data){
 
 unsigned char midi_Receive(void){
 	/* Wait for data to be recieved */
-	while(!(UCSRA & (1<<RXC)));
+	while( !(UCSRA & (1<<RXC)) ) ;
 
 	/* get and return data from buffer */
 	return UDR;
@@ -299,3 +310,7 @@ unsigned char EEPROM_read(unsigned int uiAddress){
 }
 
 /***** Timer Interrupts *****/
+
+ISR(TIMER1_COMPA_vect){
+	PORTB=0x00;
+}
