@@ -13,19 +13,19 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   4 .debug_pubnames 0000041a  00000000  00000000  00001540  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   000028a5  00000000  00000000  0000195a  2**0
+  5 .debug_info   000028a7  00000000  00000000  0000195a  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 0000153a  00000000  00000000  000041ff  2**0
+  6 .debug_abbrev 00001547  00000000  00000000  00004201  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   0000184c  00000000  00000000  00005739  2**0
+  7 .debug_line   0000184d  00000000  00000000  00005748  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000350  00000000  00000000  00006f88  2**2
+  8 .debug_frame  00000350  00000000  00000000  00006f98  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    0000053c  00000000  00000000  000072d8  2**0
+  9 .debug_str    0000053c  00000000  00000000  000072e8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    00000a9d  00000000  00000000  00007814  2**0
+ 10 .debug_loc    00000a9d  00000000  00000000  00007824  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000098  00000000  00000000  000082b1  2**0
+ 11 .debug_ranges 00000098  00000000  00000000  000082c1  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -97,96 +97,96 @@ Disassembly of section .text:
 0000008e <__bad_interrupt>:
       8e:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
 
-00000092 <setupMIDI>:
-}
-
-/***** Setup Methods *****/
-
-void setupMIDI(unsigned int baudrate){
-	UBRRH = (unsigned char) (baudrate >> 8);
-      92:	90 bd       	out	0x20, r25	; 32
-	UBRRL = (unsigned char) baudrate;
-      94:	89 b9       	out	0x09, r24	; 9
-	UCSRB = (1 << TXEN) | (1 << RXEN);
-      96:	88 e1       	ldi	r24, 0x18	; 24
-      98:	8a b9       	out	0x0a, r24	; 10
-	UCSRC = (1 << URSEL )|(0 << USBS) | (3 << UCSZ0); //only use 8 bit words
-      9a:	86 e8       	ldi	r24, 0x86	; 134
-      9c:	80 bd       	out	0x20, r24	; 32
-}
-      9e:	08 95       	ret
-
-000000a0 <setupPins>:
-void setupPins(){
-	DDRB = 0xFF;  //Set outp1ts
-      a0:	8f ef       	ldi	r24, 0xFF	; 255
-      a2:	87 bb       	out	0x17, r24	; 23
-	DDRA = 0x00;  //Set inputs
-      a4:	1a ba       	out	0x1a, r1	; 26
-	PORTB = 0x00; //Turns all leds off
-      a6:	18 ba       	out	0x18, r1	; 24
-	PORTA = 0x07; // sets inputs to return 5v on PA0, PA1, PA2
-      a8:	87 e0       	ldi	r24, 0x07	; 7
-      aa:	8b bb       	out	0x1b, r24	; 27
-	DDRD = 0x00;
-      ac:	11 ba       	out	0x11, r1	; 17
-}
-      ae:	08 95       	ret
-
-000000b0 <setupAnalog>:
-void setupAnalog(){
-	ADMUX = (1 << REFS0) | (1<< MUX0) | (1<< MUX1) | (1<< MUX2); // sets the analog input of the photosensor to 0-5v, sets to look at the 7th analog pin.
-      b0:	87 e4       	ldi	r24, 0x47	; 71
-      b2:	87 b9       	out	0x07, r24	; 7
-	ADCSRA =  (1 << ADEN) | (1<< ADPS2) | (1<< ADPS1) | (1<< ADPS0); // ADEN turns ADC on; ADPS sets prescaler to 128;
-      b4:	87 e8       	ldi	r24, 0x87	; 135
-      b6:	86 b9       	out	0x06, r24	; 6
-}
-      b8:	08 95       	ret
-
-000000ba <setupTimer>:
-void setupTimer(){
-	TCCR1A = 0x00; // enable normal mode interrupts
-      ba:	1f bc       	out	0x2f, r1	; 47
-	TCCR1B = (1 << CS10) | (1 << CS12); //prescaler 1024
-      bc:	85 e0       	ldi	r24, 0x05	; 5
-      be:	8e bd       	out	0x2e, r24	; 46
-	TIMSK = (1 << OCIE1B);
-      c0:	88 e0       	ldi	r24, 0x08	; 8
-      c2:	89 bf       	out	0x39, r24	; 57
-	sei();
-      c4:	78 94       	sei
-	OCR1A = 1953; // 500ms delay  equation = (500*10^-3/(1/3906.25));
-      c6:	81 ea       	ldi	r24, 0xA1	; 161
-      c8:	97 e0       	ldi	r25, 0x07	; 7
-      ca:	9b bd       	out	0x2b, r25	; 43
-      cc:	8a bd       	out	0x2a, r24	; 42
-	OCR1B = 3906; // 1000ms Delay
-      ce:	82 e4       	ldi	r24, 0x42	; 66
-      d0:	9f e0       	ldi	r25, 0x0F	; 15
-      d2:	99 bd       	out	0x29, r25	; 41
-      d4:	88 bd       	out	0x28, r24	; 40
-	TCNT1 = 0;
-      d6:	1d bc       	out	0x2d, r1	; 45
-      d8:	1c bc       	out	0x2c, r1	; 44
-
-}
-      da:	08 95       	ret
-
-000000dc <playBack>:
+00000092 <playBack>:
 	 writeSong2();
 }
 
 void playBack(){
 	//playTimer();
 }
-      dc:	08 95       	ret
+      92:	08 95       	ret
 
-000000de <modify>:
+00000094 <modify>:
 
 
 void modify(){
 	//analogLEDTest();
+}
+      94:	08 95       	ret
+
+00000096 <setupMIDI>:
+
+
+/***** Setup Methods *****/
+
+void setupMIDI(unsigned int baudrate){
+	UBRRH = (unsigned char) (baudrate >> 8);
+      96:	90 bd       	out	0x20, r25	; 32
+	UBRRL = (unsigned char) baudrate;
+      98:	89 b9       	out	0x09, r24	; 9
+	UCSRB = (1 << TXEN) | (1 << RXEN);
+      9a:	88 e1       	ldi	r24, 0x18	; 24
+      9c:	8a b9       	out	0x0a, r24	; 10
+	UCSRC = (1 << URSEL )|(0 << USBS) | (3 << UCSZ0); //only use 8 bit words
+      9e:	86 e8       	ldi	r24, 0x86	; 134
+      a0:	80 bd       	out	0x20, r24	; 32
+}
+      a2:	08 95       	ret
+
+000000a4 <setupPins>:
+void setupPins(){
+	DDRB = 0xFF;  //Set outp1ts
+      a4:	8f ef       	ldi	r24, 0xFF	; 255
+      a6:	87 bb       	out	0x17, r24	; 23
+	DDRA = 0x00;  //Set inputs
+      a8:	1a ba       	out	0x1a, r1	; 26
+	PORTB = 0x00; //Turns all leds off
+      aa:	18 ba       	out	0x18, r1	; 24
+	PORTA = 0x07; // sets inputs to return 5v on PA0, PA1, PA2
+      ac:	87 e0       	ldi	r24, 0x07	; 7
+      ae:	8b bb       	out	0x1b, r24	; 27
+	DDRD = 0x00;
+      b0:	11 ba       	out	0x11, r1	; 17
+}
+      b2:	08 95       	ret
+
+000000b4 <setupAnalog>:
+void setupAnalog(){
+	ADMUX = (1 << REFS0) | (1<< MUX0) | (1<< MUX1) | (1<< MUX2); // sets the analog input of the photosensor to 0-5v, sets to look at the 7th analog pin.
+      b4:	87 e4       	ldi	r24, 0x47	; 71
+      b6:	87 b9       	out	0x07, r24	; 7
+	ADCSRA =  (1 << ADEN) | (1<< ADPS2) | (1<< ADPS1) | (1<< ADPS0); // ADEN turns ADC on; ADPS sets prescaler to 128;
+      b8:	87 e8       	ldi	r24, 0x87	; 135
+      ba:	86 b9       	out	0x06, r24	; 6
+}
+      bc:	08 95       	ret
+
+000000be <setupTimer>:
+void setupTimer(){
+	TCCR1A = 0x00; // enable normal mode interrupts
+      be:	1f bc       	out	0x2f, r1	; 47
+	TCCR1B = (1 << CS10) | (1 << CS12); //prescaler 1024
+      c0:	85 e0       	ldi	r24, 0x05	; 5
+      c2:	8e bd       	out	0x2e, r24	; 46
+	TIMSK = (1 << OCIE1B);
+      c4:	88 e0       	ldi	r24, 0x08	; 8
+      c6:	89 bf       	out	0x39, r24	; 57
+	sei();
+      c8:	78 94       	sei
+	OCR1A = 3906; // 500ms delay  equation = (500*10^-3/(1/3906.25));
+      ca:	82 e4       	ldi	r24, 0x42	; 66
+      cc:	9f e0       	ldi	r25, 0x0F	; 15
+      ce:	9b bd       	out	0x2b, r25	; 43
+      d0:	8a bd       	out	0x2a, r24	; 42
+	OCR1B = 1952; // 1000ms Delay
+      d2:	80 ea       	ldi	r24, 0xA0	; 160
+      d4:	97 e0       	ldi	r25, 0x07	; 7
+      d6:	99 bd       	out	0x29, r25	; 41
+      d8:	88 bd       	out	0x28, r24	; 40
+	TCNT1 = 0;
+      da:	1d bc       	out	0x2d, r1	; 45
+      dc:	1c bc       	out	0x2c, r1	; 44
+
 }
       de:	08 95       	ret
 
@@ -491,9 +491,9 @@ void midiTransitTest(){
      25a:	08 95       	ret
 
 0000025c <playSong>:
-void modify(){
-	//analogLEDTest();
-}
+
+/***** Create Methods *****/
+
 
 
 void playSong(){
@@ -686,7 +686,7 @@ _delay_ms(double __ms)
      340:	21 96       	adiw	r28, 0x01	; 1
      342:	d0 93 7b 01 	sts	0x017B, r29
      346:	c0 93 7a 01 	sts	0x017A, r28
-}
+
 
 
 void playSong(){
@@ -920,9 +920,9 @@ for(int i =0; i <6; i++){
      418:	08 95       	ret
 
 0000041a <record>:
+    }
 }
-
-/***** Create Methods *****/
+/***** Main Methods *****/
 
 void record(){
 	 writeSong2();
@@ -961,7 +961,7 @@ void setupPins(){
 int main(void){
    setupPins();
    setupTimer();
-     430:	0e 94 5d 00 	call	0xba	; 0xba <setupTimer>
+     430:	0e 94 5f 00 	call	0xbe	; 0xbe <setupTimer>
 	PORTB = 0x00; //Turns all leds off
 	PORTA = 0x07; // sets inputs to return 5v on PA0, PA1, PA2
 	DDRD = 0x00;
@@ -973,7 +973,7 @@ void setupAnalog(){
 	ADCSRA =  (1 << ADEN) | (1<< ADPS2) | (1<< ADPS1) | (1<< ADPS0); // ADEN turns ADC on; ADPS sets prescaler to 128;
      438:	87 e8       	ldi	r24, 0x87	; 135
      43a:	86 b9       	out	0x06, r24	; 6
-}
+
 
 /***** Setup Methods *****/
 
@@ -1005,9 +1005,9 @@ void setupMIDI(unsigned int baudrate){
      450:	fb cf       	rjmp	.-10     	; 0x448 <main+0x28>
      452:	91 fd       	sbrc	r25, 1
      454:	f9 cf       	rjmp	.-14     	; 0x448 <main+0x28>
+    }
 }
-
-/***** Create Methods *****/
+/***** Main Methods *****/
 
 void record(){
 	 writeSong2();

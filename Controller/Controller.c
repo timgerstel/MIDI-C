@@ -74,6 +74,21 @@ int main(void){
 		//ledOFF();
     }
 }
+/***** Main Methods *****/
+
+void record(){
+	 writeSong2();
+}
+
+void playBack(){
+	//playTimer();
+}
+
+
+void modify(){
+	//analogLEDTest();
+}
+
 
 /***** Setup Methods *****/
 
@@ -99,26 +114,14 @@ void setupTimer(){
 	TCCR1B = (1 << CS10) | (1 << CS12); //prescaler 1024
 	TIMSK = (1 << OCIE1B);
 	sei();
-	OCR1A = 1953; // 500ms delay  equation = (500*10^-3/(1/3906.25));
-	OCR1B = 3906; // 1000ms Delay
+	OCR1A = 3906; // 1000ms delay  equation = (500*10^-3/(1/3906.25));
+	OCR1B = 1952; // 500ms Delay (note this causes the leds to turn off after button press)
 	TCNT1 = 0;
 
 }
 
 /***** Create Methods *****/
 
-void record(){
-	 writeSong2();
-}
-
-void playBack(){
-	//playTimer();
-}
-
-
-void modify(){
-	//analogLEDTest();
-}
 
 
 void playSong(){
