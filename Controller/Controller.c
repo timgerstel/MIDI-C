@@ -16,11 +16,6 @@ uint16_t adc_value;
 /* Midi test inputs */
 unsigned char midiData[8];
 
-int MIDIon = 0b10010000;
-int MIDIb1 = 0b00111100;
-int MIDIb2 = 0b01111111;
-int MIDIoff = 0b10000000;
-
 /* Method Declarations */
 void setupMIDI(unsigned int baudrate);
 void setupPins();
@@ -77,11 +72,12 @@ int main(void){
 /***** Main Methods *****/
 
 void record(){
-	 writeSong2();
+	 //writeSong2();
+	midiTransitTest();
 }
 
 void playBack(){
-	//playTimer();
+	//
 }
 
 
@@ -162,12 +158,28 @@ for(int i =0; i <6; i++){
 }
 
 void midiTransitTest(){
-	while ((UCSRA & (1 << UDRE)) == 0) {};
+	
+	midi_Transmit(144);
+	
+	midi_Transmit(66);
+	
+	midi_Transmit(111);
+	_delay_ms(500);
+	midi_Transmit(128);
+	
+	midi_Transmit(66);
+	
+	midi_Transmit(111);
+	_delay_ms(500);
 
-	midi_Transmit(MIDIon);
-	midi_Transmit(MIDIb1);
-	midi_Transmit(MIDIb2);
-	midi_Transmit(MIDIoff);
+	midi_Transmit(144);
+	midi_Transmit(86);
+	midi_Transmit(101);
+	_delay_ms(1000);
+	midi_Transmit(128);
+	midi_Transmit(86);
+	midi_Transmit(101);
+	_delay_ms(1000);
 }
 
 
@@ -223,7 +235,7 @@ void analogLEDTest(){
 
 void midi_Transmit( unsigned char data){
 	/* Wait for empty transmit buffer */
-	while(! UCSRA & (1 << UDRE) );
+	while(!(UCSRA & (1 << UDRE)) ) ;
 
 	/* Put data into buffer, sends the data */
 	UDR = data;
