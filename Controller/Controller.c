@@ -14,7 +14,6 @@ uint16_t adc_value;
 #define BUAD_PRESCALE (((F_CPU / (BUAD * 16UL))) - 1)
 
 /* Midi test inputs */
-
 unsigned char midiData[8];
 
 int MIDIon = 0b10010000;
@@ -44,6 +43,7 @@ unsigned char midi_ReadUCSRC(void);
 void EEPROM_write(unsigned int uiAddress, unsigned char ucData);
 unsigned char EEPROM_read(unsigned int uiAddress);
 void midiReceiveTest();
+void timer500();
 unsigned char TIM16_ReadTCNT1(void);
 void playSong();
 void playSong2();
@@ -71,7 +71,7 @@ int main(void){
 				playBack();
 			}	
 		}
-		ledOFF();
+		//ledOFF();
     }
 }
 
@@ -96,8 +96,6 @@ void setupAnalog(){
 }
 void setupTimer(){
 	TCCR1B = (1 << CS10) | (1 << CS12); //prescaler 1024
-	TIMSK = (1 << TOIE1);
-	sei();
 	OCR1A = 1953; // 500ms delay  equation = (500*10^-3/(1/3906.25));
 	TCNT1 = 0;
 }
@@ -105,11 +103,11 @@ void setupTimer(){
 /***** Create Methods *****/
 
 void record(){
-	 writeSong3();
+	 //writeSong2();
 }
 
 void playBack(){
-	playSong3();
+	playTimer();
 }
 
 
@@ -117,17 +115,6 @@ void modify(){
 	//analogLEDTest();
 }
 
-void writeSong(){
-	TIFR |= (1<< OCF1A); //reset timer1 overflow flag
-
-
-	if((midi_Receive()) != 0 ) {
-		EEPROM_write(eeprom_address, midi_Receive());
-		PORTB = midi_Receive();	
-		eeprom_address += sizeof(midi_Receive());
-		notecount= notecount + 1;
-	}
-}
 
 void playSong(){
 	eeprom_address= 0x00;
@@ -141,8 +128,15 @@ void playSong(){
 	
 }
 
-void writeSong3(){
-	for(int i =0; i <6; i++){
+void playTimer(){
+	while((TIFR & (1<<OCF1A)) == 0);// wait till the timer overflow flag is SET
+		PORTB ^= 0xFF;
+		TCNT1 = 0; 
+		TIFR |= (1<<OCF1A) ; //clear timer1 overflow flag
+}
+
+void writeSong2(){
+for(int i =0; i <6; i++){
 		midiData[i] = midi_Receive();
 	}
 
@@ -158,14 +152,6 @@ void writeSong3(){
 	}	
 
 }
-
- void playSong3(){
- 	for(int i =0; i < eeprom_address; i++){
- 		midi_Transmit(EEPROM_read(i));
-}
- 
-
- }
 
 void midiTransitTest(){
 	while ((UCSRA & (1 << UDRE)) == 0) {};
@@ -185,7 +171,6 @@ void wait(int time)
 void ledOFF(){
 	PORTB = 0x00;
 }
-
 
 uint16_t ReadADC(){
 	//Start a single conversion
@@ -238,7 +223,7 @@ void midi_Transmit( unsigned char data){
 
 unsigned char midi_Receive(void){
 	/* Wait for data to be recieved */
-	while( !(UCSRA & (1<<RXC)) ) ;
+	while(!(UCSRA & (1<<RXC)));
 
 	/* get and return data from buffer */
 	return UDR;
@@ -310,7 +295,3 @@ unsigned char EEPROM_read(unsigned int uiAddress){
 }
 
 /***** Timer Interrupts *****/
-
-ISR(TIMER1_COMPA_vect){
-	PORTB=0x00;
-}
