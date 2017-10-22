@@ -3,25 +3,27 @@ Controller.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         00000594  00000000  00000000  00000074  2**1
+  0 .text         00000634  00000000  00000000  00000074  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .bss          0000001a  00800060  00800060  00000608  2**0
+  1 .bss          0000001c  00800060  00800060  000006a8  2**0
                   ALLOC
-  2 .debug_aranges 00000020  00000000  00000000  00000608  2**0
+  2 .debug_aranges 00000020  00000000  00000000  000006a8  2**0
                   CONTENTS, READONLY, DEBUGGING
-  3 .debug_pubnames 00000200  00000000  00000000  00000628  2**0
+  3 .debug_pubnames 0000020f  00000000  00000000  000006c8  2**0
                   CONTENTS, READONLY, DEBUGGING
-  4 .debug_info   00000b28  00000000  00000000  00000828  2**0
+  4 .debug_info   00000c06  00000000  00000000  000008d7  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_abbrev 0000027b  00000000  00000000  00001350  2**0
+  5 .debug_abbrev 000002c0  00000000  00000000  000014dd  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_line   00000aa7  00000000  00000000  000015cb  2**0
+  6 .debug_line   00000b5e  00000000  00000000  0000179d  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_frame  00000190  00000000  00000000  00002074  2**2
+  7 .debug_frame  00000190  00000000  00000000  000022fc  2**2
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_str    000002d8  00000000  00000000  00002204  2**0
+  8 .debug_str    000002e3  00000000  00000000  0000248c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_loc    0000030f  00000000  00000000  000024dc  2**0
+  9 .debug_loc    000003ac  00000000  00000000  0000276f  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000048  00000000  00000000  00002b1b  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -35,7 +37,7 @@ Disassembly of section .text:
   14:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
   18:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
   1c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
-  20:	0c 94 bd 02 	jmp	0x57a	; 0x57a <__vector_8>
+  20:	0c 94 0d 03 	jmp	0x61a	; 0x61a <__vector_8>
   24:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
   28:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
   2c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
@@ -67,11 +69,11 @@ Disassembly of section .text:
   68:	1d 92       	st	X+, r1
 
 0000006a <.do_clear_bss_start>:
-  6a:	aa 37       	cpi	r26, 0x7A	; 122
+  6a:	ac 37       	cpi	r26, 0x7C	; 124
   6c:	b1 07       	cpc	r27, r17
   6e:	e1 f7       	brne	.-8      	; 0x68 <.do_clear_bss_loop>
-  70:	0e 94 c0 01 	call	0x380	; 0x380 <main>
-  74:	0c 94 c8 02 	jmp	0x590	; 0x590 <_exit>
+  70:	0e 94 10 02 	call	0x420	; 0x420 <main>
+  74:	0c 94 18 03 	jmp	0x630	; 0x630 <_exit>
 
 00000078 <__bad_interrupt>:
   78:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
@@ -286,7 +288,7 @@ void midi_Transmit( unsigned char data){
  144:	08 95       	ret
 
 00000146 <midiTransitTest>:
-	eeprom_address= 0x00;
+	start_addr = 0;
 	
 }
 
@@ -499,1046 +501,1187 @@ _delay_loop_2(uint16_t __count)
  242:	08 95       	ret
 
 00000244 <playSong>:
+		eeprom_address++;		
 	}	
-	stop_addr = eeprom_address;
-}
-
-void playSong(){
-	eeprom_address= 0x00;
- 244:	10 92 6b 00 	sts	0x006B, r1
- 248:	10 92 6a 00 	sts	0x006A, r1
- 24c:	19 c0       	rjmp	.+50     	; 0x280 <playSong+0x3c>
-	//SREG = cSREG;
-}
-
-unsigned char EEPROM_read(unsigned int uiAddress){
-	/* wait for completion of previous write */
-	while(EECR & (1<< EEWE));
- 24e:	e1 99       	sbic	0x1c, 1	; 28
- 250:	fe cf       	rjmp	.-4      	; 0x24e <playSong+0xa>
-	/* Set up address register */
-	EEAR = uiAddress;
- 252:	3f bb       	out	0x1f, r19	; 31
- 254:	2e bb       	out	0x1e, r18	; 30
-	//char cSREG;
-	//cSREG = SREG;
-	//cli();
-	/* Start eeprom read by writing EERE */
-	EECR |= (1<< EERE);
- 256:	e0 9a       	sbi	0x1c, 0	; 28
-	/* Return data from data register */
-	//SREG = cSREG;
-	return EEDR;
- 258:	8d b3       	in	r24, 0x1d	; 29
-}
-
-void playSong(){
-	eeprom_address= 0x00;
-	while(eeprom_address < stop_addr){
-		PORTB = EEPROM_read(eeprom_address);
- 25a:	88 bb       	out	0x18, r24	; 24
-	//SREG = cSREG;
-}
-
-unsigned char EEPROM_read(unsigned int uiAddress){
-	/* wait for completion of previous write */
-	while(EECR & (1<< EEWE));
- 25c:	e1 99       	sbic	0x1c, 1	; 28
- 25e:	fe cf       	rjmp	.-4      	; 0x25c <playSong+0x18>
-	/* Set up address register */
-	EEAR = uiAddress;
- 260:	3f bb       	out	0x1f, r19	; 31
- 262:	2e bb       	out	0x1e, r18	; 30
-	//char cSREG;
-	//cSREG = SREG;
-	//cli();
-	/* Start eeprom read by writing EERE */
-	EECR |= (1<< EERE);
- 264:	e0 9a       	sbi	0x1c, 0	; 28
-	/* Return data from data register */
-	//SREG = cSREG;
-	return EEDR;
- 266:	8d b3       	in	r24, 0x1d	; 29
-
-void playSong(){
-	eeprom_address= 0x00;
-	while(eeprom_address < stop_addr){
-		PORTB = EEPROM_read(eeprom_address);
-		midi_Transmit(EEPROM_read(eeprom_address));
- 268:	90 e0       	ldi	r25, 0x00	; 0
- 26a:	0e 94 9f 00 	call	0x13e	; 0x13e <midi_Transmit>
-		eeprom_address++;
- 26e:	80 91 6a 00 	lds	r24, 0x006A
- 272:	90 91 6b 00 	lds	r25, 0x006B
- 276:	01 96       	adiw	r24, 0x01	; 1
- 278:	90 93 6b 00 	sts	0x006B, r25
- 27c:	80 93 6a 00 	sts	0x006A, r24
-	stop_addr = eeprom_address;
-}
-
-void playSong(){
-	eeprom_address= 0x00;
-	while(eeprom_address < stop_addr){
- 280:	20 91 6a 00 	lds	r18, 0x006A
- 284:	30 91 6b 00 	lds	r19, 0x006B
- 288:	80 91 6c 00 	lds	r24, 0x006C
- 28c:	90 91 6d 00 	lds	r25, 0x006D
- 290:	28 17       	cp	r18, r24
- 292:	39 07       	cpc	r19, r25
- 294:	e0 f2       	brcs	.-72     	; 0x24e <playSong+0xa>
-		PORTB = EEPROM_read(eeprom_address);
-		midi_Transmit(EEPROM_read(eeprom_address));
-		eeprom_address++;
-	}
-	eeprom_address= 0x00;
- 296:	10 92 6b 00 	sts	0x006B, r1
- 29a:	10 92 6a 00 	sts	0x006A, r1
 	
 }
- 29e:	08 95       	ret
 
-000002a0 <playBack>:
+void playSong(){
+ 244:	0f 93       	push	r16
+ 246:	1f 93       	push	r17
+ 248:	cf 93       	push	r28
+ 24a:	df 93       	push	r29
+ 24c:	04 e6       	ldi	r16, 0x64	; 100
+ 24e:	10 e0       	ldi	r17, 0x00	; 0
+ 250:	5c c0       	rjmp	.+184    	; 0x30a <playSong+0xc6>
+	
+	while(start_addr < stop_addr){
+		for(int i = 0; i < 3; i++){
+			midiData[i] = EEPROM_read(start_addr);
+ 252:	20 91 70 00 	lds	r18, 0x0070
+ 256:	30 91 71 00 	lds	r19, 0x0071
+	//SREG = cSREG;
+}
+
+unsigned char EEPROM_read(unsigned int uiAddress){
+	/* wait for completion of previous write */
+	while(EECR & (1<< EEWE));
+ 25a:	e1 99       	sbic	0x1c, 1	; 28
+ 25c:	fe cf       	rjmp	.-4      	; 0x25a <playSong+0x16>
+	/* Set up address register */
+	EEAR = uiAddress;
+ 25e:	3f bb       	out	0x1f, r19	; 31
+ 260:	2e bb       	out	0x1e, r18	; 30
+	//char cSREG;
+	//cSREG = SREG;
+	//cli();
+	/* Start eeprom read by writing EERE */
+	EECR |= (1<< EERE);
+ 262:	e0 9a       	sbi	0x1c, 0	; 28
+	/* Return data from data register */
+	//SREG = cSREG;
+	return EEDR;
+ 264:	8d b3       	in	r24, 0x1d	; 29
+
+void playSong(){
+	
+	while(start_addr < stop_addr){
+		for(int i = 0; i < 3; i++){
+			midiData[i] = EEPROM_read(start_addr);
+ 266:	88 83       	st	Y, r24
+	//SREG = cSREG;
+}
+
+unsigned char EEPROM_read(unsigned int uiAddress){
+	/* wait for completion of previous write */
+	while(EECR & (1<< EEWE));
+ 268:	e1 99       	sbic	0x1c, 1	; 28
+ 26a:	fe cf       	rjmp	.-4      	; 0x268 <playSong+0x24>
+	/* Set up address register */
+	EEAR = uiAddress;
+ 26c:	3f bb       	out	0x1f, r19	; 31
+ 26e:	2e bb       	out	0x1e, r18	; 30
+	//char cSREG;
+	//cSREG = SREG;
+	//cli();
+	/* Start eeprom read by writing EERE */
+	EECR |= (1<< EERE);
+ 270:	e0 9a       	sbi	0x1c, 0	; 28
+	/* Return data from data register */
+	//SREG = cSREG;
+	return EEDR;
+ 272:	8d b3       	in	r24, 0x1d	; 29
+void playSong(){
+	
+	while(start_addr < stop_addr){
+		for(int i = 0; i < 3; i++){
+			midiData[i] = EEPROM_read(start_addr);
+			midi_Transmit(EEPROM_read(start_addr));
+ 274:	90 e0       	ldi	r25, 0x00	; 0
+ 276:	0e 94 9f 00 	call	0x13e	; 0x13e <midi_Transmit>
+			start_addr++;
+ 27a:	20 91 70 00 	lds	r18, 0x0070
+ 27e:	30 91 71 00 	lds	r19, 0x0071
+ 282:	2f 5f       	subi	r18, 0xFF	; 255
+ 284:	3f 4f       	sbci	r19, 0xFF	; 255
+ 286:	30 93 71 00 	sts	0x0071, r19
+ 28a:	20 93 70 00 	sts	0x0070, r18
+ 28e:	21 96       	adiw	r28, 0x01	; 1
+}
+
+void playSong(){
+	
+	while(start_addr < stop_addr){
+		for(int i = 0; i < 3; i++){
+ 290:	80 e0       	ldi	r24, 0x00	; 0
+ 292:	c5 37       	cpi	r28, 0x75	; 117
+ 294:	d8 07       	cpc	r29, r24
+ 296:	e9 f6       	brne	.-70     	; 0x252 <playSong+0xe>
+			midiData[i] = EEPROM_read(start_addr);
+			midi_Transmit(EEPROM_read(start_addr));
+			start_addr++;
+		}
+		PORTB = midiData[1];
+ 298:	80 91 73 00 	lds	r24, 0x0073
+ 29c:	88 bb       	out	0x18, r24	; 24
+ 29e:	88 e8       	ldi	r24, 0x88	; 136
+ 2a0:	93 e1       	ldi	r25, 0x13	; 19
+ 2a2:	f8 01       	movw	r30, r16
+ 2a4:	31 97       	sbiw	r30, 0x01	; 1
+ 2a6:	f1 f7       	brne	.-4      	; 0x2a4 <playSong+0x60>
+		{
+			// wait 1/10 ms
+			_delay_loop_2(((F_CPU) / 4e3) / 10);
+			__ticks --;
+ 2a8:	01 97       	sbiw	r24, 0x01	; 1
+		__ticks = 1;
+	else if (__tmp > 65535)
+	{
+		//	__ticks = requested delay in 1/10 ms
+		__ticks = (uint16_t) (__ms * 10.0);
+		while(__ticks)
+ 2aa:	d9 f7       	brne	.-10     	; 0x2a2 <playSong+0x5e>
+
+		_delay_ms(500);
+		start_addr = start_addr + 2;
+ 2ac:	2e 5f       	subi	r18, 0xFE	; 254
+ 2ae:	3f 4f       	sbci	r19, 0xFF	; 255
+ 2b0:	30 93 71 00 	sts	0x0071, r19
+ 2b4:	20 93 70 00 	sts	0x0070, r18
+ 2b8:	c5 e0       	ldi	r28, 0x05	; 5
+ 2ba:	d0 e0       	ldi	r29, 0x00	; 0
+		for(int j = 5; j < 8; j++){
+			midi_Transmit(EEPROM_read(start_addr));
+ 2bc:	80 91 70 00 	lds	r24, 0x0070
+ 2c0:	90 91 71 00 	lds	r25, 0x0071
+	//SREG = cSREG;
+}
+
+unsigned char EEPROM_read(unsigned int uiAddress){
+	/* wait for completion of previous write */
+	while(EECR & (1<< EEWE));
+ 2c4:	e1 99       	sbic	0x1c, 1	; 28
+ 2c6:	fe cf       	rjmp	.-4      	; 0x2c4 <playSong+0x80>
+	/* Set up address register */
+	EEAR = uiAddress;
+ 2c8:	9f bb       	out	0x1f, r25	; 31
+ 2ca:	8e bb       	out	0x1e, r24	; 30
+	//char cSREG;
+	//cSREG = SREG;
+	//cli();
+	/* Start eeprom read by writing EERE */
+	EECR |= (1<< EERE);
+ 2cc:	e0 9a       	sbi	0x1c, 0	; 28
+	/* Return data from data register */
+	//SREG = cSREG;
+	return EEDR;
+ 2ce:	8d b3       	in	r24, 0x1d	; 29
+		PORTB = midiData[1];
+
+		_delay_ms(500);
+		start_addr = start_addr + 2;
+		for(int j = 5; j < 8; j++){
+			midi_Transmit(EEPROM_read(start_addr));
+ 2d0:	90 e0       	ldi	r25, 0x00	; 0
+ 2d2:	0e 94 9f 00 	call	0x13e	; 0x13e <midi_Transmit>
+			start_addr++;
+ 2d6:	80 91 70 00 	lds	r24, 0x0070
+ 2da:	90 91 71 00 	lds	r25, 0x0071
+ 2de:	01 96       	adiw	r24, 0x01	; 1
+ 2e0:	90 93 71 00 	sts	0x0071, r25
+ 2e4:	80 93 70 00 	sts	0x0070, r24
+ 2e8:	01 97       	sbiw	r24, 0x01	; 1
+		}
+		PORTB = midiData[1];
+
+		_delay_ms(500);
+		start_addr = start_addr + 2;
+		for(int j = 5; j < 8; j++){
+ 2ea:	21 96       	adiw	r28, 0x01	; 1
+ 2ec:	c8 30       	cpi	r28, 0x08	; 8
+ 2ee:	d1 05       	cpc	r29, r1
+ 2f0:	29 f7       	brne	.-54     	; 0x2bc <playSong+0x78>
+			midi_Transmit(EEPROM_read(start_addr));
+			start_addr++;
+		}
+		start_addr = start_addr + 2;
+ 2f2:	03 96       	adiw	r24, 0x03	; 3
+ 2f4:	90 93 71 00 	sts	0x0071, r25
+ 2f8:	80 93 70 00 	sts	0x0070, r24
+ 2fc:	88 e8       	ldi	r24, 0x88	; 136
+ 2fe:	93 e1       	ldi	r25, 0x13	; 19
+ 300:	f8 01       	movw	r30, r16
+ 302:	31 97       	sbiw	r30, 0x01	; 1
+ 304:	f1 f7       	brne	.-4      	; 0x302 <playSong+0xbe>
+		{
+			// wait 1/10 ms
+			_delay_loop_2(((F_CPU) / 4e3) / 10);
+			__ticks --;
+ 306:	01 97       	sbiw	r24, 0x01	; 1
+		__ticks = 1;
+	else if (__tmp > 65535)
+	{
+		//	__ticks = requested delay in 1/10 ms
+		__ticks = (uint16_t) (__ms * 10.0);
+		while(__ticks)
+ 308:	d9 f7       	brne	.-10     	; 0x300 <playSong+0xbc>
+	
+}
+
+void playSong(){
+	
+	while(start_addr < stop_addr){
+ 30a:	20 91 70 00 	lds	r18, 0x0070
+ 30e:	30 91 71 00 	lds	r19, 0x0071
+ 312:	80 91 6c 00 	lds	r24, 0x006C
+ 316:	90 91 6d 00 	lds	r25, 0x006D
+ 31a:	28 17       	cp	r18, r24
+ 31c:	39 07       	cpc	r19, r25
+ 31e:	18 f4       	brcc	.+6      	; 0x326 <playSong+0xe2>
+ 320:	c2 e7       	ldi	r28, 0x72	; 114
+ 322:	d0 e0       	ldi	r29, 0x00	; 0
+ 324:	96 cf       	rjmp	.-212    	; 0x252 <playSong+0xe>
+			start_addr++;
+		}
+		start_addr = start_addr + 2;
+		_delay_ms(500);
+	}
+	start_addr = 0;
+ 326:	10 92 71 00 	sts	0x0071, r1
+ 32a:	10 92 70 00 	sts	0x0070, r1
+	
+}
+ 32e:	df 91       	pop	r29
+ 330:	cf 91       	pop	r28
+ 332:	1f 91       	pop	r17
+ 334:	0f 91       	pop	r16
+ 336:	08 95       	ret
+
+00000338 <playBack>:
 }
 
 void playBack(){
 	//midiTransitTest();
 	//eeprom_test();
 	playSong();
- 2a0:	0e 94 22 01 	call	0x244	; 0x244 <playSong>
+ 338:	0e 94 22 01 	call	0x244	; 0x244 <playSong>
 }
- 2a4:	08 95       	ret
+ 33c:	08 95       	ret
 
-000002a6 <midi_Receive>:
+0000033e <midi_Receive>:
 	UDR = data;
 }
 
 unsigned char midi_Receive(void){
 	/* Wait for data to be recieved */
 	while(!(UCSRA & (1<<RXC)));
- 2a6:	5f 9b       	sbis	0x0b, 7	; 11
- 2a8:	fe cf       	rjmp	.-4      	; 0x2a6 <midi_Receive>
+ 33e:	5f 9b       	sbis	0x0b, 7	; 11
+ 340:	fe cf       	rjmp	.-4      	; 0x33e <midi_Receive>
 
 	/* get and return data from buffer */
 	return UDR;
- 2aa:	8c b1       	in	r24, 0x0c	; 12
+ 342:	8c b1       	in	r24, 0x0c	; 12
 }
- 2ac:	08 95       	ret
+ 344:	08 95       	ret
 
-000002ae <midi_Flush>:
+00000346 <midi_Flush>:
 
 /* flushs the buffer of the midi */
 void midi_Flush(void){ 
- 2ae:	01 c0       	rjmp	.+2      	; 0x2b2 <midi_Flush+0x4>
+ 346:	01 c0       	rjmp	.+2      	; 0x34a <midi_Flush+0x4>
 	unsigned char dummy;
 	while (UCSRA & (1 << RXC) ) dummy = UDR;
- 2b0:	8c b1       	in	r24, 0x0c	; 12
- 2b2:	5f 99       	sbic	0x0b, 7	; 11
- 2b4:	fd cf       	rjmp	.-6      	; 0x2b0 <midi_Flush+0x2>
+ 348:	8c b1       	in	r24, 0x0c	; 12
+ 34a:	5f 99       	sbic	0x0b, 7	; 11
+ 34c:	fd cf       	rjmp	.-6      	; 0x348 <midi_Flush+0x2>
 }
- 2b6:	08 95       	ret
+ 34e:	08 95       	ret
 
-000002b8 <midi_ReadUCSRC>:
+00000350 <midi_ReadUCSRC>:
 
 unsigned char midi_ReadUCSRC(void){
 	unsigned char ucsrc;
 	/* read UCSRC */
 	//note may need cli() to disable interrupts
 	ucsrc = UBRRH;
- 2b8:	80 b5       	in	r24, 0x20	; 32
+ 350:	80 b5       	in	r24, 0x20	; 32
 	ucsrc = UCSRC;
- 2ba:	80 b5       	in	r24, 0x20	; 32
+ 352:	80 b5       	in	r24, 0x20	; 32
 	return ucsrc;
 }
- 2bc:	08 95       	ret
+ 354:	08 95       	ret
 
-000002be <TIM16_ReadTCNT1>:
+00000356 <TIM16_ReadTCNT1>:
 
 unsigned char TIM16_ReadTCNT1(void){
 	unsigned char sreg;
 	unsigned char i;
 	/* save gloval interrupt flag */
 	sreg = SREG;
- 2be:	2f b7       	in	r18, 0x3f	; 63
+ 356:	2f b7       	in	r18, 0x3f	; 63
 	/* disable interrupts */
 	cli();
- 2c0:	f8 94       	cli
+ 358:	f8 94       	cli
 	/* read TCNT1 into i */
 	i = TCNT1;
- 2c2:	8c b5       	in	r24, 0x2c	; 44
- 2c4:	9d b5       	in	r25, 0x2d	; 45
+ 35a:	8c b5       	in	r24, 0x2c	; 44
+ 35c:	9d b5       	in	r25, 0x2d	; 45
 	/* restore global interrupt flag */
 	SREG = sreg;
- 2c6:	2f bf       	out	0x3f, r18	; 63
+ 35e:	2f bf       	out	0x3f, r18	; 63
 	return i;
 }
- 2c8:	08 95       	ret
+ 360:	08 95       	ret
 
-000002ca <TIM16_WriteTCNT1>:
+00000362 <TIM16_WriteTCNT1>:
 
 void TIM16_WriteTCNT1 (unsigned int i){
 	unsigned char sreg;
 	/* save global interrupt flag */
 	sreg = SREG;
- 2ca:	2f b7       	in	r18, 0x3f	; 63
+ 362:	2f b7       	in	r18, 0x3f	; 63
 	/* disable interrupts */
 	cli();
- 2cc:	f8 94       	cli
+ 364:	f8 94       	cli
 	/* set tcnt1 to i */
 	TCNT1 = i;
- 2ce:	9d bd       	out	0x2d, r25	; 45
- 2d0:	8c bd       	out	0x2c, r24	; 44
+ 366:	9d bd       	out	0x2d, r25	; 45
+ 368:	8c bd       	out	0x2c, r24	; 44
 	/* restore global interrupt flag */
 	SREG = sreg;
- 2d2:	2f bf       	out	0x3f, r18	; 63
+ 36a:	2f bf       	out	0x3f, r18	; 63
 }
- 2d4:	08 95       	ret
+ 36c:	08 95       	ret
 
-000002d6 <EEPROM_write>:
+0000036e <EEPROM_write>:
 
 void EEPROM_write(unsigned int uiAddress, unsigned char ucData){
 	/* wait for completion of previous write */
 	while (EECR & (1 <<EEWE));
- 2d6:	e1 99       	sbic	0x1c, 1	; 28
- 2d8:	fe cf       	rjmp	.-4      	; 0x2d6 <EEPROM_write>
+ 36e:	e1 99       	sbic	0x1c, 1	; 28
+ 370:	fe cf       	rjmp	.-4      	; 0x36e <EEPROM_write>
 
 	
 	/* Set up address and data registers */
 	EEAR = uiAddress;
- 2da:	9f bb       	out	0x1f, r25	; 31
- 2dc:	8e bb       	out	0x1e, r24	; 30
+ 372:	9f bb       	out	0x1f, r25	; 31
+ 374:	8e bb       	out	0x1e, r24	; 30
 	EEDR = ucData;
- 2de:	6d bb       	out	0x1d, r22	; 29
+ 376:	6d bb       	out	0x1d, r22	; 29
 	//char cSREG;
 	//cSREG = SREG;
 	//cli();
 
 	/* Write logical one to EEMWE */
 	EECR |= (1 << EEMWE);
- 2e0:	e2 9a       	sbi	0x1c, 2	; 28
+ 378:	e2 9a       	sbi	0x1c, 2	; 28
 	/* Start eeporm write by setting EEWE */
 	EECR |= (1 << EEWE);
- 2e2:	e1 9a       	sbi	0x1c, 1	; 28
+ 37a:	e1 9a       	sbi	0x1c, 1	; 28
 	//SREG = cSREG;
 }
- 2e4:	08 95       	ret
+ 37c:	08 95       	ret
 
-000002e6 <writeSong2>:
+0000037e <writeSong2>:
 	PORTB = EEPROM_read(9);
 	_delay_ms(500);
 }
 
 
 void writeSong2(){
- 2e6:	cf 93       	push	r28
- 2e8:	df 93       	push	r29
- 2ea:	c0 e7       	ldi	r28, 0x70	; 112
- 2ec:	d0 e0       	ldi	r29, 0x00	; 0
- 2ee:	fe 01       	movw	r30, r28
+ 37e:	cf 93       	push	r28
+ 380:	df 93       	push	r29
+ 382:	c2 e7       	ldi	r28, 0x72	; 114
+ 384:	d0 e0       	ldi	r29, 0x00	; 0
+ 386:	fe 01       	movw	r30, r28
 	UDR = data;
 }
 
 unsigned char midi_Receive(void){
 	/* Wait for data to be recieved */
 	while(!(UCSRA & (1<<RXC)));
- 2f0:	5f 9b       	sbis	0x0b, 7	; 11
- 2f2:	fe cf       	rjmp	.-4      	; 0x2f0 <writeSong2+0xa>
+ 388:	5f 9b       	sbis	0x0b, 7	; 11
+ 38a:	fe cf       	rjmp	.-4      	; 0x388 <writeSong2+0xa>
 
 	/* get and return data from buffer */
 	return UDR;
- 2f4:	8c b1       	in	r24, 0x0c	; 12
+ 38c:	8c b1       	in	r24, 0x0c	; 12
 
 void writeSong2(){
 	unsigned char captureTime;
 	unsigned char interval;
 	for(int i =0; i <3; i++){
 		midiData[i] = midi_Receive();
- 2f6:	81 93       	st	Z+, r24
+ 38e:	81 93       	st	Z+, r24
 
 
 void writeSong2(){
 	unsigned char captureTime;
 	unsigned char interval;
 	for(int i =0; i <3; i++){
- 2f8:	20 e0       	ldi	r18, 0x00	; 0
- 2fa:	e3 37       	cpi	r30, 0x73	; 115
- 2fc:	f2 07       	cpc	r31, r18
- 2fe:	c1 f7       	brne	.-16     	; 0x2f0 <writeSong2+0xa>
+ 390:	80 e0       	ldi	r24, 0x00	; 0
+ 392:	e5 37       	cpi	r30, 0x75	; 117
+ 394:	f8 07       	cpc	r31, r24
+ 396:	c1 f7       	brne	.-16     	; 0x388 <writeSong2+0xa>
 		midiData[i] = midi_Receive();
 	}
 	PORTB = midiData[1];
- 300:	80 91 71 00 	lds	r24, 0x0071
- 304:	88 bb       	out	0x18, r24	; 24
-	TCNT1 = 0;
- 306:	1d bc       	out	0x2d, r1	; 45
- 308:	1c bc       	out	0x2c, r1	; 44
+ 398:	80 91 73 00 	lds	r24, 0x0073
+ 39c:	88 bb       	out	0x18, r24	; 24
+	
 	captureTime = TCNT1;
- 30a:	2c b5       	in	r18, 0x2c	; 44
- 30c:	3d b5       	in	r19, 0x2d	; 45
- 30e:	42 2f       	mov	r20, r18
+ 39e:	2c b5       	in	r18, 0x2c	; 44
+ 3a0:	3d b5       	in	r19, 0x2d	; 45
+ 3a2:	42 2f       	mov	r20, r18
+	TCNT1 = 0;
+ 3a4:	1d bc       	out	0x2d, r1	; 45
+ 3a6:	1c bc       	out	0x2c, r1	; 44
 	unsigned char captureTimeA = ((captureTime << 8)>>8);
 	unsigned char captureTimeB = (captureTime >> 8);
 	midiData[3] = captureTimeA;
- 310:	92 2f       	mov	r25, r18
- 312:	80 e0       	ldi	r24, 0x00	; 0
- 314:	89 2f       	mov	r24, r25
- 316:	99 0f       	add	r25, r25
- 318:	99 0b       	sbc	r25, r25
- 31a:	80 83       	st	Z, r24
+ 3a8:	92 2f       	mov	r25, r18
+ 3aa:	80 e0       	ldi	r24, 0x00	; 0
+ 3ac:	89 2f       	mov	r24, r25
+ 3ae:	99 0f       	add	r25, r25
+ 3b0:	99 0b       	sbc	r25, r25
+ 3b2:	80 83       	st	Z, r24
 	midiData[4] = captureTimeB;
- 31c:	11 82       	std	Z+1, r1	; 0x01
- 31e:	32 96       	adiw	r30, 0x02	; 2
+ 3b4:	11 82       	std	Z+1, r1	; 0x01
+ 3b6:	32 96       	adiw	r30, 0x02	; 2
 	UDR = data;
 }
 
 unsigned char midi_Receive(void){
 	/* Wait for data to be recieved */
 	while(!(UCSRA & (1<<RXC)));
- 320:	5f 9b       	sbis	0x0b, 7	; 11
- 322:	fe cf       	rjmp	.-4      	; 0x320 <writeSong2+0x3a>
+ 3b8:	5f 9b       	sbis	0x0b, 7	; 11
+ 3ba:	fe cf       	rjmp	.-4      	; 0x3b8 <writeSong2+0x3a>
 
 	/* get and return data from buffer */
 	return UDR;
- 324:	8c b1       	in	r24, 0x0c	; 12
+ 3bc:	8c b1       	in	r24, 0x0c	; 12
 	unsigned char captureTimeB = (captureTime >> 8);
 	midiData[3] = captureTimeA;
 	midiData[4] = captureTimeB;
 	
 	for(int j=5; j < 8; j++){
 		midiData[j] = midi_Receive();
- 326:	81 93       	st	Z+, r24
+ 3be:	81 93       	st	Z+, r24
 	unsigned char captureTimeA = ((captureTime << 8)>>8);
 	unsigned char captureTimeB = (captureTime >> 8);
 	midiData[3] = captureTimeA;
 	midiData[4] = captureTimeB;
 	
 	for(int j=5; j < 8; j++){
- 328:	80 e0       	ldi	r24, 0x00	; 0
- 32a:	e8 37       	cpi	r30, 0x78	; 120
- 32c:	f8 07       	cpc	r31, r24
- 32e:	c1 f7       	brne	.-16     	; 0x320 <writeSong2+0x3a>
+ 3c0:	80 e0       	ldi	r24, 0x00	; 0
+ 3c2:	ea 37       	cpi	r30, 0x7A	; 122
+ 3c4:	f8 07       	cpc	r31, r24
+ 3c6:	c1 f7       	brne	.-16     	; 0x3b8 <writeSong2+0x3a>
 		midiData[j] = midi_Receive();
 	}
-	interval = TCNT1 - captureTime;
- 330:	2c b5       	in	r18, 0x2c	; 44
- 332:	3d b5       	in	r19, 0x2d	; 45
+	interval = captureTime-TCNT1 ;
+ 3c8:	8c b5       	in	r24, 0x2c	; 44
+ 3ca:	9d b5       	in	r25, 0x2d	; 45
 	unsigned char intervalA = ((interval << 8) >> 8);
 	unsigned char intervalB = (interval >> 8);
 	midiData[8] = intervalA;
- 334:	92 2f       	mov	r25, r18
- 336:	94 1b       	sub	r25, r20
- 338:	80 e0       	ldi	r24, 0x00	; 0
- 33a:	89 2f       	mov	r24, r25
- 33c:	99 0f       	add	r25, r25
- 33e:	99 0b       	sbc	r25, r25
- 340:	80 83       	st	Z, r24
+ 3cc:	34 2f       	mov	r19, r20
+ 3ce:	38 1b       	sub	r19, r24
+ 3d0:	20 e0       	ldi	r18, 0x00	; 0
+ 3d2:	23 2f       	mov	r18, r19
+ 3d4:	33 0f       	add	r19, r19
+ 3d6:	33 0b       	sbc	r19, r19
+ 3d8:	20 83       	st	Z, r18
 	midiData[9] = intervalB;
- 342:	11 82       	std	Z+1, r1	; 0x01
+ 3da:	11 82       	std	Z+1, r1	; 0x01
 
 	
 	
-
+	stop_addr = eeprom_address;
+ 3dc:	80 91 6a 00 	lds	r24, 0x006A
+ 3e0:	90 91 6b 00 	lds	r25, 0x006B
+ 3e4:	90 93 6d 00 	sts	0x006D, r25
+ 3e8:	80 93 6c 00 	sts	0x006C, r24
 	for(int j= 0; j < 10; j++) {
 		EEPROM_write(eeprom_address, midiData[j]);
- 344:	80 91 6a 00 	lds	r24, 0x006A
- 348:	90 91 6b 00 	lds	r25, 0x006B
- 34c:	69 91       	ld	r22, Y+
- 34e:	0e 94 6b 01 	call	0x2d6	; 0x2d6 <EEPROM_write>
+ 3ec:	80 91 6a 00 	lds	r24, 0x006A
+ 3f0:	90 91 6b 00 	lds	r25, 0x006B
+ 3f4:	69 91       	ld	r22, Y+
+ 3f6:	0e 94 b7 01 	call	0x36e	; 0x36e <EEPROM_write>
 		eeprom_address++;		
- 352:	80 91 6a 00 	lds	r24, 0x006A
- 356:	90 91 6b 00 	lds	r25, 0x006B
- 35a:	01 96       	adiw	r24, 0x01	; 1
- 35c:	90 93 6b 00 	sts	0x006B, r25
- 360:	80 93 6a 00 	sts	0x006A, r24
+ 3fa:	80 91 6a 00 	lds	r24, 0x006A
+ 3fe:	90 91 6b 00 	lds	r25, 0x006B
+ 402:	01 96       	adiw	r24, 0x01	; 1
+ 404:	90 93 6b 00 	sts	0x006B, r25
+ 408:	80 93 6a 00 	sts	0x006A, r24
 	midiData[9] = intervalB;
 
 	
 	
-
+	stop_addr = eeprom_address;
 	for(int j= 0; j < 10; j++) {
- 364:	20 e0       	ldi	r18, 0x00	; 0
- 366:	ca 37       	cpi	r28, 0x7A	; 122
- 368:	d2 07       	cpc	r29, r18
- 36a:	61 f7       	brne	.-40     	; 0x344 <writeSong2+0x5e>
+ 40c:	80 e0       	ldi	r24, 0x00	; 0
+ 40e:	cc 37       	cpi	r28, 0x7C	; 124
+ 410:	d8 07       	cpc	r29, r24
+ 412:	61 f7       	brne	.-40     	; 0x3ec <writeSong2+0x6e>
 		EEPROM_write(eeprom_address, midiData[j]);
 		eeprom_address++;		
 	}	
-	stop_addr = eeprom_address;
- 36c:	90 93 6d 00 	sts	0x006D, r25
- 370:	80 93 6c 00 	sts	0x006C, r24
+	
 }
- 374:	df 91       	pop	r29
- 376:	cf 91       	pop	r28
- 378:	08 95       	ret
+ 414:	df 91       	pop	r29
+ 416:	cf 91       	pop	r28
+ 418:	08 95       	ret
 
-0000037a <record>:
+0000041a <record>:
     }
 }
 /***** Main Methods *****/
 
 void record(){
 	 writeSong2();
- 37a:	0e 94 73 01 	call	0x2e6	; 0x2e6 <writeSong2>
+ 41a:	0e 94 bf 01 	call	0x37e	; 0x37e <writeSong2>
 	//midiTransitTest();
 }
- 37e:	08 95       	ret
+ 41e:	08 95       	ret
 
-00000380 <main>:
+00000420 <main>:
 void playSong();
 void playSong2();
 
 
 /***** Main Loop *****/
 int main(void){
- 380:	1f 93       	push	r17
+ 420:	1f 93       	push	r17
 	UBRRL = (unsigned char) baudrate;
 	UCSRB = (1 << TXEN) | (1 << RXEN);
 	UCSRC = (1 << URSEL )|(0 << USBS) | (3 << UCSZ0); //only use 8 bit words
 }
 void setupPins(){
 	DDRB = 0xFF;  //Set outp1ts
- 382:	8f ef       	ldi	r24, 0xFF	; 255
- 384:	87 bb       	out	0x17, r24	; 23
+ 422:	8f ef       	ldi	r24, 0xFF	; 255
+ 424:	87 bb       	out	0x17, r24	; 23
 	DDRA = 0x00;  //Set inputs
- 386:	1a ba       	out	0x1a, r1	; 26
+ 426:	1a ba       	out	0x1a, r1	; 26
 	PORTB = 0x00; //Turns all leds off
- 388:	18 ba       	out	0x18, r1	; 24
+ 428:	18 ba       	out	0x18, r1	; 24
 	PORTA = 0x07; // sets inputs to return 5v on PA0, PA1, PA2
- 38a:	17 e0       	ldi	r17, 0x07	; 7
- 38c:	1b bb       	out	0x1b, r17	; 27
+ 42a:	17 e0       	ldi	r17, 0x07	; 7
+ 42c:	1b bb       	out	0x1b, r17	; 27
 	DDRD = 0x00;
- 38e:	11 ba       	out	0x11, r1	; 17
+ 42e:	11 ba       	out	0x11, r1	; 17
 
 
 /***** Main Loop *****/
 int main(void){
    setupPins();
    setupTimer();
- 390:	0e 94 53 00 	call	0xa6	; 0xa6 <setupTimer>
+ 430:	0e 94 53 00 	call	0xa6	; 0xa6 <setupTimer>
 	PORTB = 0x00; //Turns all leds off
 	PORTA = 0x07; // sets inputs to return 5v on PA0, PA1, PA2
 	DDRD = 0x00;
 }
 void setupAnalog(){
 	ADMUX = (1 << REFS0) | (1<< MUX0) | (1<< MUX1) | (1<< MUX2); // sets the analog input of the photosensor to 0-5v, sets to look at the 7th analog pin.
- 394:	87 e4       	ldi	r24, 0x47	; 71
- 396:	87 b9       	out	0x07, r24	; 7
+ 434:	87 e4       	ldi	r24, 0x47	; 71
+ 436:	87 b9       	out	0x07, r24	; 7
 	ADCSRA =  (1 << ADEN) | (1<< ADPS2) | (1<< ADPS1) | (1<< ADPS0); // ADEN turns ADC on; ADPS sets prescaler to 128;
- 398:	87 e8       	ldi	r24, 0x87	; 135
- 39a:	86 b9       	out	0x06, r24	; 6
+ 438:	87 e8       	ldi	r24, 0x87	; 135
+ 43a:	86 b9       	out	0x06, r24	; 6
 
 
 /***** Setup Methods *****/
 
 void setupMIDI(unsigned int baudrate){
 	UBRRH = (unsigned char) (baudrate >> 8);
- 39c:	10 bc       	out	0x20, r1	; 32
+ 43c:	10 bc       	out	0x20, r1	; 32
 	UBRRL = (unsigned char) baudrate;
- 39e:	19 b9       	out	0x09, r17	; 9
+ 43e:	19 b9       	out	0x09, r17	; 9
 	UCSRB = (1 << TXEN) | (1 << RXEN);
- 3a0:	88 e1       	ldi	r24, 0x18	; 24
- 3a2:	8a b9       	out	0x0a, r24	; 10
+ 440:	88 e1       	ldi	r24, 0x18	; 24
+ 442:	8a b9       	out	0x0a, r24	; 10
 	UCSRC = (1 << URSEL )|(0 << USBS) | (3 << UCSZ0); //only use 8 bit words
- 3a4:	86 e8       	ldi	r24, 0x86	; 134
- 3a6:	80 bd       	out	0x20, r24	; 32
+ 444:	86 e8       	ldi	r24, 0x86	; 134
+ 446:	80 bd       	out	0x20, r24	; 32
    setupTimer();
    setupAnalog();
    setupMIDI(BUAD_PRESCALE);
 
     while(1){
 		uint8_t rec = PINA & 0x04;
- 3a8:	89 b3       	in	r24, 0x19	; 25
+ 448:	89 b3       	in	r24, 0x19	; 25
 		uint8_t play = PINA & 0x02;
- 3aa:	99 b3       	in	r25, 0x19	; 25
- 3ac:	92 70       	andi	r25, 0x02	; 2
+ 44a:	99 b3       	in	r25, 0x19	; 25
+ 44c:	92 70       	andi	r25, 0x02	; 2
 		uint8_t mod = PINA & 0x01;
- 3ae:	29 b3       	in	r18, 0x19	; 25
+ 44e:	29 b3       	in	r18, 0x19	; 25
 	
 		if(rec && !play){
- 3b0:	82 ff       	sbrs	r24, 2
- 3b2:	05 c0       	rjmp	.+10     	; 0x3be <main+0x3e>
- 3b4:	99 23       	and	r25, r25
- 3b6:	c1 f7       	brne	.-16     	; 0x3a8 <main+0x28>
+ 450:	82 ff       	sbrs	r24, 2
+ 452:	05 c0       	rjmp	.+10     	; 0x45e <main+0x3e>
+ 454:	99 23       	and	r25, r25
+ 456:	c1 f7       	brne	.-16     	; 0x448 <main+0x28>
     }
 }
 /***** Main Methods *****/
 
 void record(){
 	 writeSong2();
- 3b8:	0e 94 73 01 	call	0x2e6	; 0x2e6 <writeSong2>
- 3bc:	f5 cf       	rjmp	.-22     	; 0x3a8 <main+0x28>
+ 458:	0e 94 bf 01 	call	0x37e	; 0x37e <writeSong2>
+ 45c:	f5 cf       	rjmp	.-22     	; 0x448 <main+0x28>
 		uint8_t mod = PINA & 0x01;
 	
 		if(rec && !play){
 			record();
 		}
 		if(play && !rec){
- 3be:	99 23       	and	r25, r25
- 3c0:	99 f3       	breq	.-26     	; 0x3a8 <main+0x28>
+ 45e:	99 23       	and	r25, r25
+ 460:	99 f3       	breq	.-26     	; 0x448 <main+0x28>
 			if (mod){ // Modify Mode
- 3c2:	20 fd       	sbrc	r18, 0
- 3c4:	f1 cf       	rjmp	.-30     	; 0x3a8 <main+0x28>
+ 462:	20 fd       	sbrc	r18, 0
+ 464:	f1 cf       	rjmp	.-30     	; 0x448 <main+0x28>
 }
 
 void playBack(){
 	//midiTransitTest();
 	//eeprom_test();
 	playSong();
- 3c6:	0e 94 22 01 	call	0x244	; 0x244 <playSong>
- 3ca:	ee cf       	rjmp	.-36     	; 0x3a8 <main+0x28>
+ 466:	0e 94 22 01 	call	0x244	; 0x244 <playSong>
+ 46a:	ee cf       	rjmp	.-36     	; 0x448 <main+0x28>
 
-000003cc <eeprom_test>:
+0000046c <eeprom_test>:
 
 
 
 
 void eeprom_test(){
 	EEPROM_write(1, 1);
- 3cc:	81 e0       	ldi	r24, 0x01	; 1
- 3ce:	90 e0       	ldi	r25, 0x00	; 0
- 3d0:	61 e0       	ldi	r22, 0x01	; 1
- 3d2:	0e 94 6b 01 	call	0x2d6	; 0x2d6 <EEPROM_write>
+ 46c:	81 e0       	ldi	r24, 0x01	; 1
+ 46e:	90 e0       	ldi	r25, 0x00	; 0
+ 470:	61 e0       	ldi	r22, 0x01	; 1
+ 472:	0e 94 b7 01 	call	0x36e	; 0x36e <EEPROM_write>
 	EEPROM_write(2, 2);
- 3d6:	82 e0       	ldi	r24, 0x02	; 2
- 3d8:	90 e0       	ldi	r25, 0x00	; 0
- 3da:	62 e0       	ldi	r22, 0x02	; 2
- 3dc:	0e 94 6b 01 	call	0x2d6	; 0x2d6 <EEPROM_write>
+ 476:	82 e0       	ldi	r24, 0x02	; 2
+ 478:	90 e0       	ldi	r25, 0x00	; 0
+ 47a:	62 e0       	ldi	r22, 0x02	; 2
+ 47c:	0e 94 b7 01 	call	0x36e	; 0x36e <EEPROM_write>
 	EEPROM_write(3, 3);
- 3e0:	83 e0       	ldi	r24, 0x03	; 3
- 3e2:	90 e0       	ldi	r25, 0x00	; 0
- 3e4:	63 e0       	ldi	r22, 0x03	; 3
- 3e6:	0e 94 6b 01 	call	0x2d6	; 0x2d6 <EEPROM_write>
+ 480:	83 e0       	ldi	r24, 0x03	; 3
+ 482:	90 e0       	ldi	r25, 0x00	; 0
+ 484:	63 e0       	ldi	r22, 0x03	; 3
+ 486:	0e 94 b7 01 	call	0x36e	; 0x36e <EEPROM_write>
 	EEPROM_write(4, 4);
- 3ea:	84 e0       	ldi	r24, 0x04	; 4
- 3ec:	90 e0       	ldi	r25, 0x00	; 0
- 3ee:	64 e0       	ldi	r22, 0x04	; 4
- 3f0:	0e 94 6b 01 	call	0x2d6	; 0x2d6 <EEPROM_write>
+ 48a:	84 e0       	ldi	r24, 0x04	; 4
+ 48c:	90 e0       	ldi	r25, 0x00	; 0
+ 48e:	64 e0       	ldi	r22, 0x04	; 4
+ 490:	0e 94 b7 01 	call	0x36e	; 0x36e <EEPROM_write>
 	EEPROM_write(5, 5);
- 3f4:	85 e0       	ldi	r24, 0x05	; 5
- 3f6:	90 e0       	ldi	r25, 0x00	; 0
- 3f8:	65 e0       	ldi	r22, 0x05	; 5
- 3fa:	0e 94 6b 01 	call	0x2d6	; 0x2d6 <EEPROM_write>
+ 494:	85 e0       	ldi	r24, 0x05	; 5
+ 496:	90 e0       	ldi	r25, 0x00	; 0
+ 498:	65 e0       	ldi	r22, 0x05	; 5
+ 49a:	0e 94 b7 01 	call	0x36e	; 0x36e <EEPROM_write>
 	EEPROM_write(6, 6);
- 3fe:	86 e0       	ldi	r24, 0x06	; 6
- 400:	90 e0       	ldi	r25, 0x00	; 0
- 402:	66 e0       	ldi	r22, 0x06	; 6
- 404:	0e 94 6b 01 	call	0x2d6	; 0x2d6 <EEPROM_write>
+ 49e:	86 e0       	ldi	r24, 0x06	; 6
+ 4a0:	90 e0       	ldi	r25, 0x00	; 0
+ 4a2:	66 e0       	ldi	r22, 0x06	; 6
+ 4a4:	0e 94 b7 01 	call	0x36e	; 0x36e <EEPROM_write>
 	EEPROM_write(7, 7);
- 408:	87 e0       	ldi	r24, 0x07	; 7
- 40a:	90 e0       	ldi	r25, 0x00	; 0
- 40c:	67 e0       	ldi	r22, 0x07	; 7
- 40e:	0e 94 6b 01 	call	0x2d6	; 0x2d6 <EEPROM_write>
+ 4a8:	87 e0       	ldi	r24, 0x07	; 7
+ 4aa:	90 e0       	ldi	r25, 0x00	; 0
+ 4ac:	67 e0       	ldi	r22, 0x07	; 7
+ 4ae:	0e 94 b7 01 	call	0x36e	; 0x36e <EEPROM_write>
 	EEPROM_write(8, 8);
- 412:	88 e0       	ldi	r24, 0x08	; 8
- 414:	90 e0       	ldi	r25, 0x00	; 0
- 416:	68 e0       	ldi	r22, 0x08	; 8
- 418:	0e 94 6b 01 	call	0x2d6	; 0x2d6 <EEPROM_write>
+ 4b2:	88 e0       	ldi	r24, 0x08	; 8
+ 4b4:	90 e0       	ldi	r25, 0x00	; 0
+ 4b6:	68 e0       	ldi	r22, 0x08	; 8
+ 4b8:	0e 94 b7 01 	call	0x36e	; 0x36e <EEPROM_write>
 	EEPROM_write(9, 9);
- 41c:	89 e0       	ldi	r24, 0x09	; 9
- 41e:	90 e0       	ldi	r25, 0x00	; 0
- 420:	69 e0       	ldi	r22, 0x09	; 9
- 422:	0e 94 6b 01 	call	0x2d6	; 0x2d6 <EEPROM_write>
+ 4bc:	89 e0       	ldi	r24, 0x09	; 9
+ 4be:	90 e0       	ldi	r25, 0x00	; 0
+ 4c0:	69 e0       	ldi	r22, 0x09	; 9
+ 4c2:	0e 94 b7 01 	call	0x36e	; 0x36e <EEPROM_write>
 	//SREG = cSREG;
 }
 
 unsigned char EEPROM_read(unsigned int uiAddress){
 	/* wait for completion of previous write */
 	while(EECR & (1<< EEWE));
- 426:	e1 99       	sbic	0x1c, 1	; 28
- 428:	fe cf       	rjmp	.-4      	; 0x426 <eeprom_test+0x5a>
+ 4c6:	e1 99       	sbic	0x1c, 1	; 28
+ 4c8:	fe cf       	rjmp	.-4      	; 0x4c6 <eeprom_test+0x5a>
 	/* Set up address register */
 	EEAR = uiAddress;
- 42a:	81 e0       	ldi	r24, 0x01	; 1
- 42c:	90 e0       	ldi	r25, 0x00	; 0
- 42e:	9f bb       	out	0x1f, r25	; 31
- 430:	8e bb       	out	0x1e, r24	; 30
+ 4ca:	81 e0       	ldi	r24, 0x01	; 1
+ 4cc:	90 e0       	ldi	r25, 0x00	; 0
+ 4ce:	9f bb       	out	0x1f, r25	; 31
+ 4d0:	8e bb       	out	0x1e, r24	; 30
 	//char cSREG;
 	//cSREG = SREG;
 	//cli();
 	/* Start eeprom read by writing EERE */
 	EECR |= (1<< EERE);
- 432:	e0 9a       	sbi	0x1c, 0	; 28
+ 4d2:	e0 9a       	sbi	0x1c, 0	; 28
 	/* Return data from data register */
 	//SREG = cSREG;
 	return EEDR;
- 434:	8d b3       	in	r24, 0x1d	; 29
+ 4d4:	8d b3       	in	r24, 0x1d	; 29
 	EEPROM_write(5, 5);
 	EEPROM_write(6, 6);
 	EEPROM_write(7, 7);
 	EEPROM_write(8, 8);
 	EEPROM_write(9, 9);
 	PORTB = EEPROM_read(1);
- 436:	88 bb       	out	0x18, r24	; 24
- 438:	88 e8       	ldi	r24, 0x88	; 136
- 43a:	93 e1       	ldi	r25, 0x13	; 19
- 43c:	24 e6       	ldi	r18, 0x64	; 100
- 43e:	30 e0       	ldi	r19, 0x00	; 0
- 440:	f9 01       	movw	r30, r18
- 442:	31 97       	sbiw	r30, 0x01	; 1
- 444:	f1 f7       	brne	.-4      	; 0x442 <eeprom_test+0x76>
+ 4d6:	88 bb       	out	0x18, r24	; 24
+ 4d8:	88 e8       	ldi	r24, 0x88	; 136
+ 4da:	93 e1       	ldi	r25, 0x13	; 19
+ 4dc:	24 e6       	ldi	r18, 0x64	; 100
+ 4de:	30 e0       	ldi	r19, 0x00	; 0
+ 4e0:	f9 01       	movw	r30, r18
+ 4e2:	31 97       	sbiw	r30, 0x01	; 1
+ 4e4:	f1 f7       	brne	.-4      	; 0x4e2 <eeprom_test+0x76>
 		{
 			// wait 1/10 ms
 			_delay_loop_2(((F_CPU) / 4e3) / 10);
 			__ticks --;
- 446:	01 97       	sbiw	r24, 0x01	; 1
+ 4e6:	01 97       	sbiw	r24, 0x01	; 1
 		__ticks = 1;
 	else if (__tmp > 65535)
 	{
 		//	__ticks = requested delay in 1/10 ms
 		__ticks = (uint16_t) (__ms * 10.0);
 		while(__ticks)
- 448:	d9 f7       	brne	.-10     	; 0x440 <eeprom_test+0x74>
+ 4e8:	d9 f7       	brne	.-10     	; 0x4e0 <eeprom_test+0x74>
 	//SREG = cSREG;
 }
 
 unsigned char EEPROM_read(unsigned int uiAddress){
 	/* wait for completion of previous write */
 	while(EECR & (1<< EEWE));
- 44a:	e1 99       	sbic	0x1c, 1	; 28
- 44c:	fe cf       	rjmp	.-4      	; 0x44a <eeprom_test+0x7e>
+ 4ea:	e1 99       	sbic	0x1c, 1	; 28
+ 4ec:	fe cf       	rjmp	.-4      	; 0x4ea <eeprom_test+0x7e>
 	/* Set up address register */
 	EEAR = uiAddress;
- 44e:	82 e0       	ldi	r24, 0x02	; 2
- 450:	90 e0       	ldi	r25, 0x00	; 0
- 452:	9f bb       	out	0x1f, r25	; 31
- 454:	8e bb       	out	0x1e, r24	; 30
+ 4ee:	82 e0       	ldi	r24, 0x02	; 2
+ 4f0:	90 e0       	ldi	r25, 0x00	; 0
+ 4f2:	9f bb       	out	0x1f, r25	; 31
+ 4f4:	8e bb       	out	0x1e, r24	; 30
 	//char cSREG;
 	//cSREG = SREG;
 	//cli();
 	/* Start eeprom read by writing EERE */
 	EECR |= (1<< EERE);
- 456:	e0 9a       	sbi	0x1c, 0	; 28
+ 4f6:	e0 9a       	sbi	0x1c, 0	; 28
 	/* Return data from data register */
 	//SREG = cSREG;
 	return EEDR;
- 458:	8d b3       	in	r24, 0x1d	; 29
+ 4f8:	8d b3       	in	r24, 0x1d	; 29
 	EEPROM_write(7, 7);
 	EEPROM_write(8, 8);
 	EEPROM_write(9, 9);
 	PORTB = EEPROM_read(1);
 	_delay_ms(500);
 	PORTB = EEPROM_read(2);
- 45a:	88 bb       	out	0x18, r24	; 24
- 45c:	88 e8       	ldi	r24, 0x88	; 136
- 45e:	93 e1       	ldi	r25, 0x13	; 19
- 460:	24 e6       	ldi	r18, 0x64	; 100
- 462:	30 e0       	ldi	r19, 0x00	; 0
- 464:	f9 01       	movw	r30, r18
- 466:	31 97       	sbiw	r30, 0x01	; 1
- 468:	f1 f7       	brne	.-4      	; 0x466 <eeprom_test+0x9a>
+ 4fa:	88 bb       	out	0x18, r24	; 24
+ 4fc:	88 e8       	ldi	r24, 0x88	; 136
+ 4fe:	93 e1       	ldi	r25, 0x13	; 19
+ 500:	24 e6       	ldi	r18, 0x64	; 100
+ 502:	30 e0       	ldi	r19, 0x00	; 0
+ 504:	f9 01       	movw	r30, r18
+ 506:	31 97       	sbiw	r30, 0x01	; 1
+ 508:	f1 f7       	brne	.-4      	; 0x506 <eeprom_test+0x9a>
 		{
 			// wait 1/10 ms
 			_delay_loop_2(((F_CPU) / 4e3) / 10);
 			__ticks --;
- 46a:	01 97       	sbiw	r24, 0x01	; 1
+ 50a:	01 97       	sbiw	r24, 0x01	; 1
 		__ticks = 1;
 	else if (__tmp > 65535)
 	{
 		//	__ticks = requested delay in 1/10 ms
 		__ticks = (uint16_t) (__ms * 10.0);
 		while(__ticks)
- 46c:	d9 f7       	brne	.-10     	; 0x464 <eeprom_test+0x98>
+ 50c:	d9 f7       	brne	.-10     	; 0x504 <eeprom_test+0x98>
 	//SREG = cSREG;
 }
 
 unsigned char EEPROM_read(unsigned int uiAddress){
 	/* wait for completion of previous write */
 	while(EECR & (1<< EEWE));
- 46e:	e1 99       	sbic	0x1c, 1	; 28
- 470:	fe cf       	rjmp	.-4      	; 0x46e <eeprom_test+0xa2>
+ 50e:	e1 99       	sbic	0x1c, 1	; 28
+ 510:	fe cf       	rjmp	.-4      	; 0x50e <eeprom_test+0xa2>
 	/* Set up address register */
 	EEAR = uiAddress;
- 472:	83 e0       	ldi	r24, 0x03	; 3
- 474:	90 e0       	ldi	r25, 0x00	; 0
- 476:	9f bb       	out	0x1f, r25	; 31
- 478:	8e bb       	out	0x1e, r24	; 30
+ 512:	83 e0       	ldi	r24, 0x03	; 3
+ 514:	90 e0       	ldi	r25, 0x00	; 0
+ 516:	9f bb       	out	0x1f, r25	; 31
+ 518:	8e bb       	out	0x1e, r24	; 30
 	//char cSREG;
 	//cSREG = SREG;
 	//cli();
 	/* Start eeprom read by writing EERE */
 	EECR |= (1<< EERE);
- 47a:	e0 9a       	sbi	0x1c, 0	; 28
+ 51a:	e0 9a       	sbi	0x1c, 0	; 28
 	/* Return data from data register */
 	//SREG = cSREG;
 	return EEDR;
- 47c:	8d b3       	in	r24, 0x1d	; 29
+ 51c:	8d b3       	in	r24, 0x1d	; 29
 	EEPROM_write(9, 9);
 	PORTB = EEPROM_read(1);
 	_delay_ms(500);
 	PORTB = EEPROM_read(2);
 	_delay_ms(500);
 	PORTB = EEPROM_read(3);
- 47e:	88 bb       	out	0x18, r24	; 24
- 480:	88 e8       	ldi	r24, 0x88	; 136
- 482:	93 e1       	ldi	r25, 0x13	; 19
- 484:	24 e6       	ldi	r18, 0x64	; 100
- 486:	30 e0       	ldi	r19, 0x00	; 0
- 488:	f9 01       	movw	r30, r18
- 48a:	31 97       	sbiw	r30, 0x01	; 1
- 48c:	f1 f7       	brne	.-4      	; 0x48a <eeprom_test+0xbe>
+ 51e:	88 bb       	out	0x18, r24	; 24
+ 520:	88 e8       	ldi	r24, 0x88	; 136
+ 522:	93 e1       	ldi	r25, 0x13	; 19
+ 524:	24 e6       	ldi	r18, 0x64	; 100
+ 526:	30 e0       	ldi	r19, 0x00	; 0
+ 528:	f9 01       	movw	r30, r18
+ 52a:	31 97       	sbiw	r30, 0x01	; 1
+ 52c:	f1 f7       	brne	.-4      	; 0x52a <eeprom_test+0xbe>
 		{
 			// wait 1/10 ms
 			_delay_loop_2(((F_CPU) / 4e3) / 10);
 			__ticks --;
- 48e:	01 97       	sbiw	r24, 0x01	; 1
+ 52e:	01 97       	sbiw	r24, 0x01	; 1
 		__ticks = 1;
 	else if (__tmp > 65535)
 	{
 		//	__ticks = requested delay in 1/10 ms
 		__ticks = (uint16_t) (__ms * 10.0);
 		while(__ticks)
- 490:	d9 f7       	brne	.-10     	; 0x488 <eeprom_test+0xbc>
+ 530:	d9 f7       	brne	.-10     	; 0x528 <eeprom_test+0xbc>
 	//SREG = cSREG;
 }
 
 unsigned char EEPROM_read(unsigned int uiAddress){
 	/* wait for completion of previous write */
 	while(EECR & (1<< EEWE));
- 492:	e1 99       	sbic	0x1c, 1	; 28
- 494:	fe cf       	rjmp	.-4      	; 0x492 <eeprom_test+0xc6>
+ 532:	e1 99       	sbic	0x1c, 1	; 28
+ 534:	fe cf       	rjmp	.-4      	; 0x532 <eeprom_test+0xc6>
 	/* Set up address register */
 	EEAR = uiAddress;
- 496:	84 e0       	ldi	r24, 0x04	; 4
- 498:	90 e0       	ldi	r25, 0x00	; 0
- 49a:	9f bb       	out	0x1f, r25	; 31
- 49c:	8e bb       	out	0x1e, r24	; 30
+ 536:	84 e0       	ldi	r24, 0x04	; 4
+ 538:	90 e0       	ldi	r25, 0x00	; 0
+ 53a:	9f bb       	out	0x1f, r25	; 31
+ 53c:	8e bb       	out	0x1e, r24	; 30
 	//char cSREG;
 	//cSREG = SREG;
 	//cli();
 	/* Start eeprom read by writing EERE */
 	EECR |= (1<< EERE);
- 49e:	e0 9a       	sbi	0x1c, 0	; 28
+ 53e:	e0 9a       	sbi	0x1c, 0	; 28
 	/* Return data from data register */
 	//SREG = cSREG;
 	return EEDR;
- 4a0:	8d b3       	in	r24, 0x1d	; 29
+ 540:	8d b3       	in	r24, 0x1d	; 29
 	_delay_ms(500);
 	PORTB = EEPROM_read(2);
 	_delay_ms(500);
 	PORTB = EEPROM_read(3);
 	_delay_ms(500);
 	PORTB = EEPROM_read(4);
- 4a2:	88 bb       	out	0x18, r24	; 24
- 4a4:	88 e8       	ldi	r24, 0x88	; 136
- 4a6:	93 e1       	ldi	r25, 0x13	; 19
- 4a8:	24 e6       	ldi	r18, 0x64	; 100
- 4aa:	30 e0       	ldi	r19, 0x00	; 0
- 4ac:	f9 01       	movw	r30, r18
- 4ae:	31 97       	sbiw	r30, 0x01	; 1
- 4b0:	f1 f7       	brne	.-4      	; 0x4ae <eeprom_test+0xe2>
+ 542:	88 bb       	out	0x18, r24	; 24
+ 544:	88 e8       	ldi	r24, 0x88	; 136
+ 546:	93 e1       	ldi	r25, 0x13	; 19
+ 548:	24 e6       	ldi	r18, 0x64	; 100
+ 54a:	30 e0       	ldi	r19, 0x00	; 0
+ 54c:	f9 01       	movw	r30, r18
+ 54e:	31 97       	sbiw	r30, 0x01	; 1
+ 550:	f1 f7       	brne	.-4      	; 0x54e <eeprom_test+0xe2>
 		{
 			// wait 1/10 ms
 			_delay_loop_2(((F_CPU) / 4e3) / 10);
 			__ticks --;
- 4b2:	01 97       	sbiw	r24, 0x01	; 1
+ 552:	01 97       	sbiw	r24, 0x01	; 1
 		__ticks = 1;
 	else if (__tmp > 65535)
 	{
 		//	__ticks = requested delay in 1/10 ms
 		__ticks = (uint16_t) (__ms * 10.0);
 		while(__ticks)
- 4b4:	d9 f7       	brne	.-10     	; 0x4ac <eeprom_test+0xe0>
+ 554:	d9 f7       	brne	.-10     	; 0x54c <eeprom_test+0xe0>
 	//SREG = cSREG;
 }
 
 unsigned char EEPROM_read(unsigned int uiAddress){
 	/* wait for completion of previous write */
 	while(EECR & (1<< EEWE));
- 4b6:	e1 99       	sbic	0x1c, 1	; 28
- 4b8:	fe cf       	rjmp	.-4      	; 0x4b6 <eeprom_test+0xea>
+ 556:	e1 99       	sbic	0x1c, 1	; 28
+ 558:	fe cf       	rjmp	.-4      	; 0x556 <eeprom_test+0xea>
 	/* Set up address register */
 	EEAR = uiAddress;
- 4ba:	85 e0       	ldi	r24, 0x05	; 5
- 4bc:	90 e0       	ldi	r25, 0x00	; 0
- 4be:	9f bb       	out	0x1f, r25	; 31
- 4c0:	8e bb       	out	0x1e, r24	; 30
+ 55a:	85 e0       	ldi	r24, 0x05	; 5
+ 55c:	90 e0       	ldi	r25, 0x00	; 0
+ 55e:	9f bb       	out	0x1f, r25	; 31
+ 560:	8e bb       	out	0x1e, r24	; 30
 	//char cSREG;
 	//cSREG = SREG;
 	//cli();
 	/* Start eeprom read by writing EERE */
 	EECR |= (1<< EERE);
- 4c2:	e0 9a       	sbi	0x1c, 0	; 28
+ 562:	e0 9a       	sbi	0x1c, 0	; 28
 	/* Return data from data register */
 	//SREG = cSREG;
 	return EEDR;
- 4c4:	8d b3       	in	r24, 0x1d	; 29
+ 564:	8d b3       	in	r24, 0x1d	; 29
 	_delay_ms(500);
 	PORTB = EEPROM_read(3);
 	_delay_ms(500);
 	PORTB = EEPROM_read(4);
 	_delay_ms(500);
 	PORTB = EEPROM_read(5);
- 4c6:	88 bb       	out	0x18, r24	; 24
- 4c8:	88 e8       	ldi	r24, 0x88	; 136
- 4ca:	93 e1       	ldi	r25, 0x13	; 19
- 4cc:	24 e6       	ldi	r18, 0x64	; 100
- 4ce:	30 e0       	ldi	r19, 0x00	; 0
- 4d0:	f9 01       	movw	r30, r18
- 4d2:	31 97       	sbiw	r30, 0x01	; 1
- 4d4:	f1 f7       	brne	.-4      	; 0x4d2 <eeprom_test+0x106>
+ 566:	88 bb       	out	0x18, r24	; 24
+ 568:	88 e8       	ldi	r24, 0x88	; 136
+ 56a:	93 e1       	ldi	r25, 0x13	; 19
+ 56c:	24 e6       	ldi	r18, 0x64	; 100
+ 56e:	30 e0       	ldi	r19, 0x00	; 0
+ 570:	f9 01       	movw	r30, r18
+ 572:	31 97       	sbiw	r30, 0x01	; 1
+ 574:	f1 f7       	brne	.-4      	; 0x572 <eeprom_test+0x106>
 		{
 			// wait 1/10 ms
 			_delay_loop_2(((F_CPU) / 4e3) / 10);
 			__ticks --;
- 4d6:	01 97       	sbiw	r24, 0x01	; 1
+ 576:	01 97       	sbiw	r24, 0x01	; 1
 		__ticks = 1;
 	else if (__tmp > 65535)
 	{
 		//	__ticks = requested delay in 1/10 ms
 		__ticks = (uint16_t) (__ms * 10.0);
 		while(__ticks)
- 4d8:	d9 f7       	brne	.-10     	; 0x4d0 <eeprom_test+0x104>
+ 578:	d9 f7       	brne	.-10     	; 0x570 <eeprom_test+0x104>
 	//SREG = cSREG;
 }
 
 unsigned char EEPROM_read(unsigned int uiAddress){
 	/* wait for completion of previous write */
 	while(EECR & (1<< EEWE));
- 4da:	e1 99       	sbic	0x1c, 1	; 28
- 4dc:	fe cf       	rjmp	.-4      	; 0x4da <eeprom_test+0x10e>
+ 57a:	e1 99       	sbic	0x1c, 1	; 28
+ 57c:	fe cf       	rjmp	.-4      	; 0x57a <eeprom_test+0x10e>
 	/* Set up address register */
 	EEAR = uiAddress;
- 4de:	86 e0       	ldi	r24, 0x06	; 6
- 4e0:	90 e0       	ldi	r25, 0x00	; 0
- 4e2:	9f bb       	out	0x1f, r25	; 31
- 4e4:	8e bb       	out	0x1e, r24	; 30
+ 57e:	86 e0       	ldi	r24, 0x06	; 6
+ 580:	90 e0       	ldi	r25, 0x00	; 0
+ 582:	9f bb       	out	0x1f, r25	; 31
+ 584:	8e bb       	out	0x1e, r24	; 30
 	//char cSREG;
 	//cSREG = SREG;
 	//cli();
 	/* Start eeprom read by writing EERE */
 	EECR |= (1<< EERE);
- 4e6:	e0 9a       	sbi	0x1c, 0	; 28
+ 586:	e0 9a       	sbi	0x1c, 0	; 28
 	/* Return data from data register */
 	//SREG = cSREG;
 	return EEDR;
- 4e8:	8d b3       	in	r24, 0x1d	; 29
+ 588:	8d b3       	in	r24, 0x1d	; 29
 	_delay_ms(500);
 	PORTB = EEPROM_read(4);
 	_delay_ms(500);
 	PORTB = EEPROM_read(5);
 	_delay_ms(500);
 	PORTB = EEPROM_read(6);
- 4ea:	88 bb       	out	0x18, r24	; 24
- 4ec:	88 e8       	ldi	r24, 0x88	; 136
- 4ee:	93 e1       	ldi	r25, 0x13	; 19
- 4f0:	24 e6       	ldi	r18, 0x64	; 100
- 4f2:	30 e0       	ldi	r19, 0x00	; 0
- 4f4:	f9 01       	movw	r30, r18
- 4f6:	31 97       	sbiw	r30, 0x01	; 1
- 4f8:	f1 f7       	brne	.-4      	; 0x4f6 <eeprom_test+0x12a>
+ 58a:	88 bb       	out	0x18, r24	; 24
+ 58c:	88 e8       	ldi	r24, 0x88	; 136
+ 58e:	93 e1       	ldi	r25, 0x13	; 19
+ 590:	24 e6       	ldi	r18, 0x64	; 100
+ 592:	30 e0       	ldi	r19, 0x00	; 0
+ 594:	f9 01       	movw	r30, r18
+ 596:	31 97       	sbiw	r30, 0x01	; 1
+ 598:	f1 f7       	brne	.-4      	; 0x596 <eeprom_test+0x12a>
 		{
 			// wait 1/10 ms
 			_delay_loop_2(((F_CPU) / 4e3) / 10);
 			__ticks --;
- 4fa:	01 97       	sbiw	r24, 0x01	; 1
+ 59a:	01 97       	sbiw	r24, 0x01	; 1
 		__ticks = 1;
 	else if (__tmp > 65535)
 	{
 		//	__ticks = requested delay in 1/10 ms
 		__ticks = (uint16_t) (__ms * 10.0);
 		while(__ticks)
- 4fc:	d9 f7       	brne	.-10     	; 0x4f4 <eeprom_test+0x128>
+ 59c:	d9 f7       	brne	.-10     	; 0x594 <eeprom_test+0x128>
 	//SREG = cSREG;
 }
 
 unsigned char EEPROM_read(unsigned int uiAddress){
 	/* wait for completion of previous write */
 	while(EECR & (1<< EEWE));
- 4fe:	e1 99       	sbic	0x1c, 1	; 28
- 500:	fe cf       	rjmp	.-4      	; 0x4fe <eeprom_test+0x132>
+ 59e:	e1 99       	sbic	0x1c, 1	; 28
+ 5a0:	fe cf       	rjmp	.-4      	; 0x59e <eeprom_test+0x132>
 	/* Set up address register */
 	EEAR = uiAddress;
- 502:	87 e0       	ldi	r24, 0x07	; 7
- 504:	90 e0       	ldi	r25, 0x00	; 0
- 506:	9f bb       	out	0x1f, r25	; 31
- 508:	8e bb       	out	0x1e, r24	; 30
+ 5a2:	87 e0       	ldi	r24, 0x07	; 7
+ 5a4:	90 e0       	ldi	r25, 0x00	; 0
+ 5a6:	9f bb       	out	0x1f, r25	; 31
+ 5a8:	8e bb       	out	0x1e, r24	; 30
 	//char cSREG;
 	//cSREG = SREG;
 	//cli();
 	/* Start eeprom read by writing EERE */
 	EECR |= (1<< EERE);
- 50a:	e0 9a       	sbi	0x1c, 0	; 28
+ 5aa:	e0 9a       	sbi	0x1c, 0	; 28
 	/* Return data from data register */
 	//SREG = cSREG;
 	return EEDR;
- 50c:	8d b3       	in	r24, 0x1d	; 29
+ 5ac:	8d b3       	in	r24, 0x1d	; 29
 	_delay_ms(500);
 	PORTB = EEPROM_read(5);
 	_delay_ms(500);
 	PORTB = EEPROM_read(6);
 	_delay_ms(500);
 	PORTB = EEPROM_read(7);
- 50e:	88 bb       	out	0x18, r24	; 24
- 510:	88 e8       	ldi	r24, 0x88	; 136
- 512:	93 e1       	ldi	r25, 0x13	; 19
- 514:	24 e6       	ldi	r18, 0x64	; 100
- 516:	30 e0       	ldi	r19, 0x00	; 0
- 518:	f9 01       	movw	r30, r18
- 51a:	31 97       	sbiw	r30, 0x01	; 1
- 51c:	f1 f7       	brne	.-4      	; 0x51a <eeprom_test+0x14e>
+ 5ae:	88 bb       	out	0x18, r24	; 24
+ 5b0:	88 e8       	ldi	r24, 0x88	; 136
+ 5b2:	93 e1       	ldi	r25, 0x13	; 19
+ 5b4:	24 e6       	ldi	r18, 0x64	; 100
+ 5b6:	30 e0       	ldi	r19, 0x00	; 0
+ 5b8:	f9 01       	movw	r30, r18
+ 5ba:	31 97       	sbiw	r30, 0x01	; 1
+ 5bc:	f1 f7       	brne	.-4      	; 0x5ba <eeprom_test+0x14e>
 		{
 			// wait 1/10 ms
 			_delay_loop_2(((F_CPU) / 4e3) / 10);
 			__ticks --;
- 51e:	01 97       	sbiw	r24, 0x01	; 1
+ 5be:	01 97       	sbiw	r24, 0x01	; 1
 		__ticks = 1;
 	else if (__tmp > 65535)
 	{
 		//	__ticks = requested delay in 1/10 ms
 		__ticks = (uint16_t) (__ms * 10.0);
 		while(__ticks)
- 520:	d9 f7       	brne	.-10     	; 0x518 <eeprom_test+0x14c>
+ 5c0:	d9 f7       	brne	.-10     	; 0x5b8 <eeprom_test+0x14c>
 	//SREG = cSREG;
 }
 
 unsigned char EEPROM_read(unsigned int uiAddress){
 	/* wait for completion of previous write */
 	while(EECR & (1<< EEWE));
- 522:	e1 99       	sbic	0x1c, 1	; 28
- 524:	fe cf       	rjmp	.-4      	; 0x522 <eeprom_test+0x156>
+ 5c2:	e1 99       	sbic	0x1c, 1	; 28
+ 5c4:	fe cf       	rjmp	.-4      	; 0x5c2 <eeprom_test+0x156>
 	/* Set up address register */
 	EEAR = uiAddress;
- 526:	88 e0       	ldi	r24, 0x08	; 8
- 528:	90 e0       	ldi	r25, 0x00	; 0
- 52a:	9f bb       	out	0x1f, r25	; 31
- 52c:	8e bb       	out	0x1e, r24	; 30
+ 5c6:	88 e0       	ldi	r24, 0x08	; 8
+ 5c8:	90 e0       	ldi	r25, 0x00	; 0
+ 5ca:	9f bb       	out	0x1f, r25	; 31
+ 5cc:	8e bb       	out	0x1e, r24	; 30
 	//char cSREG;
 	//cSREG = SREG;
 	//cli();
 	/* Start eeprom read by writing EERE */
 	EECR |= (1<< EERE);
- 52e:	e0 9a       	sbi	0x1c, 0	; 28
+ 5ce:	e0 9a       	sbi	0x1c, 0	; 28
 	/* Return data from data register */
 	//SREG = cSREG;
 	return EEDR;
- 530:	8d b3       	in	r24, 0x1d	; 29
+ 5d0:	8d b3       	in	r24, 0x1d	; 29
 	_delay_ms(500);
 	PORTB = EEPROM_read(6);
 	_delay_ms(500);
 	PORTB = EEPROM_read(7);
 	_delay_ms(500);
 	PORTB = EEPROM_read(8);
- 532:	88 bb       	out	0x18, r24	; 24
- 534:	88 e8       	ldi	r24, 0x88	; 136
- 536:	93 e1       	ldi	r25, 0x13	; 19
- 538:	24 e6       	ldi	r18, 0x64	; 100
- 53a:	30 e0       	ldi	r19, 0x00	; 0
- 53c:	f9 01       	movw	r30, r18
- 53e:	31 97       	sbiw	r30, 0x01	; 1
- 540:	f1 f7       	brne	.-4      	; 0x53e <eeprom_test+0x172>
+ 5d2:	88 bb       	out	0x18, r24	; 24
+ 5d4:	88 e8       	ldi	r24, 0x88	; 136
+ 5d6:	93 e1       	ldi	r25, 0x13	; 19
+ 5d8:	24 e6       	ldi	r18, 0x64	; 100
+ 5da:	30 e0       	ldi	r19, 0x00	; 0
+ 5dc:	f9 01       	movw	r30, r18
+ 5de:	31 97       	sbiw	r30, 0x01	; 1
+ 5e0:	f1 f7       	brne	.-4      	; 0x5de <eeprom_test+0x172>
 		{
 			// wait 1/10 ms
 			_delay_loop_2(((F_CPU) / 4e3) / 10);
 			__ticks --;
- 542:	01 97       	sbiw	r24, 0x01	; 1
+ 5e2:	01 97       	sbiw	r24, 0x01	; 1
 		__ticks = 1;
 	else if (__tmp > 65535)
 	{
 		//	__ticks = requested delay in 1/10 ms
 		__ticks = (uint16_t) (__ms * 10.0);
 		while(__ticks)
- 544:	d9 f7       	brne	.-10     	; 0x53c <eeprom_test+0x170>
+ 5e4:	d9 f7       	brne	.-10     	; 0x5dc <eeprom_test+0x170>
 	//SREG = cSREG;
 }
 
 unsigned char EEPROM_read(unsigned int uiAddress){
 	/* wait for completion of previous write */
 	while(EECR & (1<< EEWE));
- 546:	e1 99       	sbic	0x1c, 1	; 28
- 548:	fe cf       	rjmp	.-4      	; 0x546 <eeprom_test+0x17a>
+ 5e6:	e1 99       	sbic	0x1c, 1	; 28
+ 5e8:	fe cf       	rjmp	.-4      	; 0x5e6 <eeprom_test+0x17a>
 	/* Set up address register */
 	EEAR = uiAddress;
- 54a:	89 e0       	ldi	r24, 0x09	; 9
- 54c:	90 e0       	ldi	r25, 0x00	; 0
- 54e:	9f bb       	out	0x1f, r25	; 31
- 550:	8e bb       	out	0x1e, r24	; 30
+ 5ea:	89 e0       	ldi	r24, 0x09	; 9
+ 5ec:	90 e0       	ldi	r25, 0x00	; 0
+ 5ee:	9f bb       	out	0x1f, r25	; 31
+ 5f0:	8e bb       	out	0x1e, r24	; 30
 	//char cSREG;
 	//cSREG = SREG;
 	//cli();
 	/* Start eeprom read by writing EERE */
 	EECR |= (1<< EERE);
- 552:	e0 9a       	sbi	0x1c, 0	; 28
+ 5f2:	e0 9a       	sbi	0x1c, 0	; 28
 	/* Return data from data register */
 	//SREG = cSREG;
 	return EEDR;
- 554:	8d b3       	in	r24, 0x1d	; 29
+ 5f4:	8d b3       	in	r24, 0x1d	; 29
 	_delay_ms(500);
 	PORTB = EEPROM_read(7);
 	_delay_ms(500);
 	PORTB = EEPROM_read(8);
 	_delay_ms(500);
 	PORTB = EEPROM_read(9);
- 556:	88 bb       	out	0x18, r24	; 24
- 558:	88 e8       	ldi	r24, 0x88	; 136
- 55a:	93 e1       	ldi	r25, 0x13	; 19
- 55c:	24 e6       	ldi	r18, 0x64	; 100
- 55e:	30 e0       	ldi	r19, 0x00	; 0
- 560:	f9 01       	movw	r30, r18
- 562:	31 97       	sbiw	r30, 0x01	; 1
- 564:	f1 f7       	brne	.-4      	; 0x562 <eeprom_test+0x196>
+ 5f6:	88 bb       	out	0x18, r24	; 24
+ 5f8:	88 e8       	ldi	r24, 0x88	; 136
+ 5fa:	93 e1       	ldi	r25, 0x13	; 19
+ 5fc:	24 e6       	ldi	r18, 0x64	; 100
+ 5fe:	30 e0       	ldi	r19, 0x00	; 0
+ 600:	f9 01       	movw	r30, r18
+ 602:	31 97       	sbiw	r30, 0x01	; 1
+ 604:	f1 f7       	brne	.-4      	; 0x602 <eeprom_test+0x196>
 		{
 			// wait 1/10 ms
 			_delay_loop_2(((F_CPU) / 4e3) / 10);
 			__ticks --;
- 566:	01 97       	sbiw	r24, 0x01	; 1
+ 606:	01 97       	sbiw	r24, 0x01	; 1
 		__ticks = 1;
 	else if (__tmp > 65535)
 	{
 		//	__ticks = requested delay in 1/10 ms
 		__ticks = (uint16_t) (__ms * 10.0);
 		while(__ticks)
- 568:	d9 f7       	brne	.-10     	; 0x560 <eeprom_test+0x194>
+ 608:	d9 f7       	brne	.-10     	; 0x600 <eeprom_test+0x194>
 	_delay_ms(500);
 }
- 56a:	08 95       	ret
+ 60a:	08 95       	ret
 
-0000056c <EEPROM_read>:
+0000060c <EEPROM_read>:
 	//SREG = cSREG;
 }
 
 unsigned char EEPROM_read(unsigned int uiAddress){
 	/* wait for completion of previous write */
 	while(EECR & (1<< EEWE));
- 56c:	e1 99       	sbic	0x1c, 1	; 28
- 56e:	fe cf       	rjmp	.-4      	; 0x56c <EEPROM_read>
+ 60c:	e1 99       	sbic	0x1c, 1	; 28
+ 60e:	fe cf       	rjmp	.-4      	; 0x60c <EEPROM_read>
 	/* Set up address register */
 	EEAR = uiAddress;
- 570:	9f bb       	out	0x1f, r25	; 31
- 572:	8e bb       	out	0x1e, r24	; 30
+ 610:	9f bb       	out	0x1f, r25	; 31
+ 612:	8e bb       	out	0x1e, r24	; 30
 	//char cSREG;
 	//cSREG = SREG;
 	//cli();
 	/* Start eeprom read by writing EERE */
 	EECR |= (1<< EERE);
- 574:	e0 9a       	sbi	0x1c, 0	; 28
+ 614:	e0 9a       	sbi	0x1c, 0	; 28
 	/* Return data from data register */
 	//SREG = cSREG;
 	return EEDR;
- 576:	8d b3       	in	r24, 0x1d	; 29
+ 616:	8d b3       	in	r24, 0x1d	; 29
 }
- 578:	08 95       	ret
+ 618:	08 95       	ret
 
-0000057a <__vector_8>:
+0000061a <__vector_8>:
 
 /***** Timer Interrupts *****/
 
 ISR(TIMER1_COMPB_vect){
- 57a:	1f 92       	push	r1
- 57c:	0f 92       	push	r0
- 57e:	0f b6       	in	r0, 0x3f	; 63
- 580:	0f 92       	push	r0
- 582:	11 24       	eor	r1, r1
+ 61a:	1f 92       	push	r1
+ 61c:	0f 92       	push	r0
+ 61e:	0f b6       	in	r0, 0x3f	; 63
+ 620:	0f 92       	push	r0
+ 622:	11 24       	eor	r1, r1
 	PORTB = 0x00; // blink
- 584:	18 ba       	out	0x18, r1	; 24
+ 624:	18 ba       	out	0x18, r1	; 24
 	 //Reset timer
 }
- 586:	0f 90       	pop	r0
- 588:	0f be       	out	0x3f, r0	; 63
- 58a:	0f 90       	pop	r0
- 58c:	1f 90       	pop	r1
- 58e:	18 95       	reti
+ 626:	0f 90       	pop	r0
+ 628:	0f be       	out	0x3f, r0	; 63
+ 62a:	0f 90       	pop	r0
+ 62c:	1f 90       	pop	r1
+ 62e:	18 95       	reti
 
-00000590 <_exit>:
- 590:	f8 94       	cli
+00000630 <_exit>:
+ 630:	f8 94       	cli
 
-00000592 <__stop_program>:
- 592:	ff cf       	rjmp	.-2      	; 0x592 <__stop_program>
+00000632 <__stop_program>:
+ 632:	ff cf       	rjmp	.-2      	; 0x632 <__stop_program>

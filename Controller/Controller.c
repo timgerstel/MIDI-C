@@ -7,7 +7,7 @@
 /***** Define Variables and constants *****/
 
 int extraTime = 0, whichLED = 0, count = 0, notecount = 0, lastNoteTime = 0;
-unsigned int eeprom_address=0x00, stop_addr;
+unsigned int eeprom_address=0x00, start_addr, stop_addr;
 uint16_t adc_value;
 #define F_CPU 4000000
 #define BUAD 31250
@@ -162,8 +162,9 @@ void writeSong2(){
 		midiData[i] = midi_Receive();
 	}
 	PORTB = midiData[1];
-	TCNT1 = 0;
+	
 	captureTime = TCNT1;
+	TCNT1 = 0;
 	unsigned char captureTimeA = ((captureTime << 8)>>8);
 	unsigned char captureTimeB = (captureTime >> 8);
 	midiData[3] = captureTimeA;
@@ -172,7 +173,7 @@ void writeSong2(){
 	for(int j=5; j < 8; j++){
 		midiData[j] = midi_Receive();
 	}
-	interval = TCNT1 - captureTime;
+	interval = captureTime-TCNT1 ;
 	unsigned char intervalA = ((interval << 8) >> 8);
 	unsigned char intervalB = (interval >> 8);
 	midiData[8] = intervalA;
@@ -180,22 +181,34 @@ void writeSong2(){
 
 	
 	
-
+	stop_addr = eeprom_address;
 	for(int j= 0; j < 10; j++) {
 		EEPROM_write(eeprom_address, midiData[j]);
 		eeprom_address++;		
 	}	
-	stop_addr = eeprom_address;
+	
 }
 
 void playSong(){
-	eeprom_address= 0x00;
-	while(eeprom_address < stop_addr){
-		PORTB = EEPROM_read(eeprom_address);
-		midi_Transmit(EEPROM_read(eeprom_address));
-		eeprom_address++;
+	
+	while(start_addr < stop_addr){
+		for(int i = 0; i < 3; i++){
+			midiData[i] = EEPROM_read(start_addr);
+			midi_Transmit(EEPROM_read(start_addr));
+			start_addr++;
+		}
+		PORTB = midiData[1];
+
+		_delay_ms(500);
+		start_addr = start_addr + 2;
+		for(int j = 5; j < 8; j++){
+			midi_Transmit(EEPROM_read(start_addr));
+			start_addr++;
+		}
+		start_addr = start_addr + 2;
+		_delay_ms(500);
 	}
-	eeprom_address= 0x00;
+	start_addr = 0;
 	
 }
 
