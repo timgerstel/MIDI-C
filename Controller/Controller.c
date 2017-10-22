@@ -164,7 +164,12 @@ void writeSong2(){
 	}
 	PORTB = midiData[1];
 	
-	midiData[3] = TCNT1;
+	interval = TCNT1;
+	unsigned char intervalA = ((interval << 8) >> 8);
+	unsigned char intervalB = (interval >> 8);
+	midiData[3] = intervalA;
+	midiData[4] = intervalB;
+
 	// TCNT1 = 0;
 	// for(int j=5; j < 8; j++){
 	// 	midiData[j] = midi_Receive();
@@ -176,7 +181,7 @@ void writeSong2(){
 	// midiData[9] = intervalB;
 	
 	stop_addr = eeprom_address;
-	for(int j= 0; j < 4; j++){
+	for(int j= 0; j < 5; j++){
 		EEPROM_write(eeprom_address, midiData[j]);
 		eeprom_address++;		
 	}
@@ -211,14 +216,15 @@ void playSong(){
 		// _delay_ms(pushUpDelay);
 
 		// start_addr = start_addr + 2;
-		for(int i = 0; i < 4; i++){
+		for(int i = 0; i < 3; i++){
 			midiData[i] = EEPROM_read(start_addr);
+			midi_Transmit(EEPROM_read(start_addr));
 			start_addr++;
 		}
-		_delay_ms((midiData[3] / 3906.25) * 1000);
-		for(int i = 0; i < 3; i++){
-			midi_Transmit(midiData[i]);
-		}
+		unsigned char captureInterval = (EEPROM_read(start_addr) | ( 8 << EEPROM_read(start_addr+1)) );
+		
+		_delay_ms((captureInterval / 3906.25) * 10000);
+		start_addr = start_addr + 2;
 	}
 	start_addr = 0;
 	
