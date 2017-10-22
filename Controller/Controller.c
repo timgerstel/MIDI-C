@@ -14,7 +14,7 @@ uint16_t adc_value;
 #define BUAD_PRESCALE (((F_CPU / (BUAD * 16UL))) - 1)
 
 /* Midi test inputs */
-unsigned char midiData[4];
+unsigned char midiData[5];
 
 /* Method Declarations */
 void setupMIDI(unsigned int baudrate);
@@ -157,14 +157,17 @@ void eeprom_test(){
 
 void writeSong2(){
 	TCNT1 = 0;
-	unsigned char captureTime;
 	unsigned char interval;
 	for(int i = 0; i <3; i++){
 		midiData[i] = midi_Receive();
 	}
 	PORTB = midiData[1];
 	
-	midiData[3] = TCNT1;
+	interval = TCNT1;
+	unsigned char lsb = ((interval << 8) >> 8);
+	unsigned char msb = ((interval >> 8));
+	midiData[3] = lsb;
+	midiData[4] = msb;
 	// TCNT1 = 0;
 	// for(int j=5; j < 8; j++){
 	// 	midiData[j] = midi_Receive();
@@ -176,7 +179,7 @@ void writeSong2(){
 	// midiData[9] = intervalB;
 	
 	stop_addr = eeprom_address;
-	for(int j= 0; j < 4; j++){
+	for(int j= 0; j < 5; j++){
 		EEPROM_write(eeprom_address, midiData[j]);
 		eeprom_address++;		
 	}
@@ -211,11 +214,14 @@ void playSong(){
 		// _delay_ms(pushUpDelay);
 
 		// start_addr = start_addr + 2;
-		for(int i = 0; i < 4; i++){
+		for(int i = 0; i < 5; i++){
 			midiData[i] = EEPROM_read(start_addr);
 			start_addr++;
 		}
-		_delay_ms((midiData[3] / 3906.25) * 1000);
+		unsigned char lsb = midiData[3];
+		unsigned char msb = midiData[4];
+		int interval = ((0x00FF & msb) << 8) | lsb;
+		_delay_ms(interval);
 		for(int i = 0; i < 3; i++){
 			midi_Transmit(midiData[i]);
 		}
