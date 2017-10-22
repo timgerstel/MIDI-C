@@ -78,7 +78,8 @@ void record(){
 
 void playBack(){
 	//midiTransitTest();
-	eeprom_test();
+	//eeprom_test();
+	playSong();
 }
 
 
@@ -121,17 +122,7 @@ void setupTimer(){
 
 
 
-void playSong(){
-	eeprom_address= 0x00;
-	while(eeprom_address < stop_addr){
-		PORTB = EEPROM_read(eeprom_address);
-		midi_Transmit(EEPROM_read(eeprom_address));
-		eeprom_address++;
-		_delay_ms(EEPROM_read(eeprom_address));
-		eeprom_address++;
-	}
-	
-}
+
 
 void eeprom_test(){
 	EEPROM_write(1, 1);
@@ -194,7 +185,18 @@ void writeSong2(){
 		EEPROM_write(eeprom_address, midiData[j]);
 		eeprom_address++;		
 	}	
+	stop_addr = eeprom_address;
+}
 
+void playSong(){
+	eeprom_address= 0x00;
+	while(eeprom_address < stop_addr){
+		PORTB = EEPROM_read(eeprom_address);
+		midi_Transmit(EEPROM_read(eeprom_address));
+		eeprom_address++;
+	}
+	eeprom_address= 0x00;
+	
 }
 
 void midiTransitTest(){
