@@ -156,6 +156,7 @@ void eeprom_test(){
 
 
 void writeSong2(){
+	TCNT1 = 0;
 	unsigned char captureTime;
 	unsigned char interval;
 	for(int i =0; i <3; i++){
@@ -164,22 +165,20 @@ void writeSong2(){
 	PORTB = midiData[1];
 	
 	captureTime = TCNT1;
-	TCNT1 = 0;
+	
 	unsigned char captureTimeA = ((captureTime << 8)>>8);
 	unsigned char captureTimeB = (captureTime >> 8);
 	midiData[3] = captureTimeA;
 	midiData[4] = captureTimeB;
-	
+	TCNT1 = 0;
 	for(int j=5; j < 8; j++){
 		midiData[j] = midi_Receive();
 	}
-	interval = captureTime-TCNT1 ;
+	interval = TCNT1 ;
 	unsigned char intervalA = ((interval << 8) >> 8);
 	unsigned char intervalB = (interval >> 8);
 	midiData[8] = intervalA;
 	midiData[9] = intervalB;
-
-	
 	
 	stop_addr = eeprom_address;
 	for(int j= 0; j < 10; j++) {
@@ -198,23 +197,25 @@ void playSong(){
 			start_addr++;
 		}
 		PORTB = midiData[1];
-		
-		for(int i = 3; i < 5){
-			midiData[i] = EEPROM_read(start_addr);
-			start_addr++;
-		}
-		uint16_t cap = ((uint16_t)(midiData[3] << 8)) + midiData[4];
-		_delay_ms(cap * (1/3906.25));
+		//TODO: create capture time method
+		unsigned char captureAddrA = start_addr;
+		unsigned char captureAddrB = start_addr + 1;
+		unsigned char captureTimed = captureAddrA | ( captureAddrB << 8);
+		int pushDownDelay = (captureTimed*(1/3906.25));
+		_delay_ms(pushDownDelay);
+
+		start_addr = start_addr + 2;
 		for(int j = 5; j < 8; j++){
 			midi_Transmit(EEPROM_read(start_addr));
 			start_addr++;
 		}
-		for(int i = 8; i < 10; i++){
-			midiData[i] = EEPROM_read(start_addr);
-			start_addr++;
-		}
-		uint16_t interval = ((uint16_t)(midiData[8] << 8)) + midiData[9];
-		_delay_ms(interval * (1/3906.25));
+		unsigned char intervalAddrA = start_addr;
+		unsigned char intervalAddrB = start_addr + 1;
+		unsigned char intervalTimed = captureAddrA | ( captureAddrB << 8);
+		int pushUpDelay = (intervalTimed*(1/3906.25));
+		_delay_ms(pushUpDelay);
+
+		start_addr = start_addr + 2;
 	}
 	start_addr = 0;
 	
