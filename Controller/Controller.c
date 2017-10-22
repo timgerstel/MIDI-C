@@ -164,18 +164,10 @@ void writeSong2(){
 	PORTB = midiData[1];
 	
 	interval = TCNT1;
-<<<<<<< HEAD
 	unsigned char lsb = ((interval << 8) >> 8);
 	unsigned char msb = ((interval >> 8));
 	midiData[3] = lsb;
 	midiData[4] = msb;
-=======
-	unsigned char intervalA = ((interval << 8) >> 8);
-	unsigned char intervalB = (interval >> 8);
-	midiData[3] = intervalA;
-	midiData[4] = intervalB;
-
->>>>>>> 917978f17038e344e416e58200d1fa994a28ed10
 	// TCNT1 = 0;
 	// for(int j=5; j < 8; j++){
 	// 	midiData[j] = midi_Receive();
