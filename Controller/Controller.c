@@ -72,7 +72,7 @@ int main(void){
 /***** Main Methods *****/
 
 void record(){
-	 writeSong2();
+	 //writeSong2();
 	//midiTransitTest();
 }
 
@@ -108,10 +108,10 @@ void setupAnalog(){
 void setupTimer(){
 	TCCR1A = 0x00; // enable normal mode interrupts
 	TCCR1B = (1 << CS10) | (1 << CS12); //prescaler 1024
-	TIMSK = (1 << OCIE1B);
-	sei();
-	OCR1A = 3906; // 1000ms delay  equation = (500*10^-3/(1/3906.25));
-	OCR1B = 1952; // 500ms Delay (note this causes the leds to turn off after button press)
+	//TIMSK = (1 << OCIE1B);
+	//sei();
+	//OCR1A = 3906; // 1000ms delay  equation = (500*10^-3/(1/3906.25));
+	//OCR1B = 1952; // 500ms Delay (note this causes the leds to turn off after button press)
 	TCNT1 = 0;
 
 }
@@ -171,28 +171,34 @@ for(int i =0; i <3; i++){
 }
 
 void midiTransitTest(){
-	
 	midi_Transmit(144);
-	
-	midi_Transmit(66);
-	
-	midi_Transmit(111);
+	midi_Transmit(67);
+	midi_Transmit(100);
 	_delay_ms(500);
 	midi_Transmit(128);
-	
-	midi_Transmit(66);
-	
-	midi_Transmit(111);
+	midi_Transmit(67);
+	midi_Transmit(100);
 	_delay_ms(500);
 
 	midi_Transmit(144);
-	midi_Transmit(86);
-	midi_Transmit(101);
-	_delay_ms(1000);
+	midi_Transmit(98);
+	midi_Transmit(100);
+	_delay_ms(500);
 	midi_Transmit(128);
-	midi_Transmit(86);
-	midi_Transmit(101);
-	_delay_ms(1000);
+	midi_Transmit(98);
+	midi_Transmit(100);
+	_delay_ms(500);
+	
+
+	midi_Transmit(144);
+	midi_Transmit(60);
+	midi_Transmit(100);
+	_delay_ms(500);
+	midi_Transmit(128);
+	midi_Transmit(60);
+	midi_Transmit(100);
+	_delay_ms(500);
+
 }
 
 
