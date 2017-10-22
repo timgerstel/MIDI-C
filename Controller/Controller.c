@@ -198,15 +198,23 @@ void playSong(){
 			start_addr++;
 		}
 		PORTB = midiData[1];
-
-		_delay_ms(500);
-		start_addr = start_addr + 2;
+		
+		for(int i = 3; i < 5){
+			midiData[i] = EEPROM_read(start_addr);
+			start_addr++;
+		}
+		uint16_t cap = ((uint16_t)(midiData[3] << 8)) + midiData[4];
+		_delay_ms(cap * (1/3906.25));
 		for(int j = 5; j < 8; j++){
 			midi_Transmit(EEPROM_read(start_addr));
 			start_addr++;
 		}
-		start_addr = start_addr + 2;
-		_delay_ms(500);
+		for(int i = 8; i < 10; i++){
+			midiData[i] = EEPROM_read(start_addr);
+			start_addr++;
+		}
+		uint16_t interval = ((uint16_t)(midiData[8] << 8)) + midiData[9];
+		_delay_ms(interval * (1/3906.25));
 	}
 	start_addr = 0;
 	
