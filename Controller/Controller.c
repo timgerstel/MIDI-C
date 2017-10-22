@@ -72,7 +72,7 @@ int main(void){
 /***** Main Methods *****/
 
 void record(){
-	 //writeSong2();
+	 writeSong2();
 	//midiTransitTest();
 }
 
@@ -132,17 +132,11 @@ void playSong(){
 	
 }
 
-void playTimer(){
-	while((TIFR & (1<<OCF1A)) == 0);// wait till the timer overflow flag is SET
-		PORTB ^= 0xFF;
-		TCNT1 = 0; 
-		TIFR |= (1<<OCF1A) ; //clear timer1 overflow flag
-}
 
 void writeSong2(){
 	unsigned char captureTime;
 	unsigned char interval;
-for(int i =0; i <3; i++){
+	for(int i =0; i <3; i++){
 		midiData[i] = midi_Receive();
 	}
 	captureTime = TCNT1;
@@ -202,10 +196,6 @@ void midiTransitTest(){
 }
 
 
-void wait(int time)
-{
-   _delay_ms(time);
-}
 
 void ledOFF(){
 	PORTB = 0x00;
@@ -313,13 +303,20 @@ void EEPROM_write(unsigned int uiAddress, unsigned char ucData){
 	/* wait for completion of previous write */
 	while (EECR & (1 <<EEWE));
 
+	
 	/* Set up address and data registers */
 	EEAR = uiAddress;
 	EEDR = ucData;
+
+	//char cSREG;
+	//cSREG = SREG;
+	//cli();
+
 	/* Write logical one to EEMWE */
 	EECR |= (1 << EEMWE);
 	/* Start eeporm write by setting EEWE */
 	EECR |= (1 << EEWE);
+	//SREG = cSREG;
 }
 
 unsigned char EEPROM_read(unsigned int uiAddress){
@@ -327,9 +324,13 @@ unsigned char EEPROM_read(unsigned int uiAddress){
 	while(EECR & (1<< EEWE));
 	/* Set up address register */
 	EEAR = uiAddress;
+	//char cSREG;
+	//cSREG = SREG;
+	//cli();
 	/* Start eeprom read by writing EERE */
 	EECR |= (1<< EERE);
 	/* Return data from data register */
+	//SREG = cSREG;
 	return EEDR;
 }
 
