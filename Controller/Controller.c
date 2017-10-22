@@ -77,7 +77,8 @@ void record(){
 }
 
 void playBack(){
-	midiTransitTest();
+	//midiTransitTest();
+	eeprom_test();
 }
 
 
@@ -108,10 +109,10 @@ void setupAnalog(){
 void setupTimer(){
 	TCCR1A = 0x00; // enable normal mode interrupts
 	TCCR1B = (1 << CS10) | (1 << CS12); //prescaler 1024
-	//TIMSK = (1 << OCIE1B);
-	//sei();
+	TIMSK = (1 << OCIE1B);
+	sei();
 	//OCR1A = 3906; // 1000ms delay  equation = (500*10^-3/(1/3906.25));
-	//OCR1B = 1952; // 500ms Delay (note this causes the leds to turn off after button press)
+	OCR1B = 1952; // 500ms Delay (note this causes the leds to turn off after button press)
 	TCNT1 = 0;
 
 }
@@ -130,6 +131,36 @@ void playSong(){
 		eeprom_address++;
 	}
 	
+}
+
+void eeprom_test(){
+	EEPROM_write(1, 1);
+	EEPROM_write(2, 2);
+	EEPROM_write(3, 3);
+	EEPROM_write(4, 4);
+	EEPROM_write(5, 5);
+	EEPROM_write(6, 6);
+	EEPROM_write(7, 7);
+	EEPROM_write(8, 8);
+	EEPROM_write(9, 9);
+	PORTB = EEPROM_read(1);
+	_delay_ms(500);
+	PORTB = EEPROM_read(2);
+	_delay_ms(500);
+	PORTB = EEPROM_read(3);
+	_delay_ms(500);
+	PORTB = EEPROM_read(4);
+	_delay_ms(500);
+	PORTB = EEPROM_read(5);
+	_delay_ms(500);
+	PORTB = EEPROM_read(6);
+	_delay_ms(500);
+	PORTB = EEPROM_read(7);
+	_delay_ms(500);
+	PORTB = EEPROM_read(8);
+	_delay_ms(500);
+	PORTB = EEPROM_read(9);
+	_delay_ms(500);
 }
 
 
@@ -337,9 +368,8 @@ unsigned char EEPROM_read(unsigned int uiAddress){
 }
 
 /***** Timer Interrupts *****/
-/*
+
 ISR(TIMER1_COMPB_vect){
-	PORTB ^= 0xFF; // blink
-	TCNT1 = 0; //Reset timer
+	PORTB = 0x00; // blink
+	 //Reset timer
 }
-*/
