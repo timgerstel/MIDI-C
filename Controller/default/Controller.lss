@@ -23,9 +23,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   9 .debug_str    0000053d  00000000  00000000  00006f7c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    00000ad5  00000000  00000000  000074b9  2**0
+ 10 .debug_loc    00000ac5  00000000  00000000  000074b9  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000098  00000000  00000000  00007f8e  2**0
+ 11 .debug_ranges 00000098  00000000  00000000  00007f7e  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -922,75 +922,77 @@ void writeSong2(){
      3ca:	c1 f7       	brne	.-16     	; 0x3bc <writeSong2+0xa>
 		midiData[i] = midi_Receive();
 	}
+	PORTB = midiData[1];
+     3cc:	80 91 79 01 	lds	r24, 0x0179
+     3d0:	88 bb       	out	0x18, r24	; 24
+	TCNT1 = 0;
+     3d2:	1d bc       	out	0x2d, r1	; 45
+     3d4:	1c bc       	out	0x2c, r1	; 44
 	captureTime = TCNT1;
-     3cc:	2c b5       	in	r18, 0x2c	; 44
-     3ce:	3d b5       	in	r19, 0x2d	; 45
-     3d0:	42 2f       	mov	r20, r18
+     3d6:	2c b5       	in	r18, 0x2c	; 44
+     3d8:	3d b5       	in	r19, 0x2d	; 45
+     3da:	42 2f       	mov	r20, r18
 	unsigned char captureTimeA = ((captureTime << 8)>>8);
 	unsigned char captureTimeB = (captureTime >> 8);
 	midiData[3] = captureTimeA;
-     3d2:	92 2f       	mov	r25, r18
-     3d4:	80 e0       	ldi	r24, 0x00	; 0
-     3d6:	89 2f       	mov	r24, r25
-     3d8:	99 0f       	add	r25, r25
-     3da:	99 0b       	sbc	r25, r25
-     3dc:	80 83       	st	Z, r24
+     3dc:	92 2f       	mov	r25, r18
+     3de:	80 e0       	ldi	r24, 0x00	; 0
+     3e0:	89 2f       	mov	r24, r25
+     3e2:	99 0f       	add	r25, r25
+     3e4:	99 0b       	sbc	r25, r25
+     3e6:	80 83       	st	Z, r24
 	midiData[4] = captureTimeB;
-     3de:	11 82       	std	Z+1, r1	; 0x01
-     3e0:	32 96       	adiw	r30, 0x02	; 2
+     3e8:	11 82       	std	Z+1, r1	; 0x01
+     3ea:	32 96       	adiw	r30, 0x02	; 2
 	UDR = data;
 }
 
 unsigned char midi_Receive(void){
 	/* Wait for data to be recieved */
 	while(!(UCSRA & (1<<RXC)));
-     3e2:	5f 9b       	sbis	0x0b, 7	; 11
-     3e4:	fe cf       	rjmp	.-4      	; 0x3e2 <writeSong2+0x30>
+     3ec:	5f 9b       	sbis	0x0b, 7	; 11
+     3ee:	fe cf       	rjmp	.-4      	; 0x3ec <writeSong2+0x3a>
 
 	/* get and return data from buffer */
 	return UDR;
-     3e6:	8c b1       	in	r24, 0x0c	; 12
+     3f0:	8c b1       	in	r24, 0x0c	; 12
 	unsigned char captureTimeB = (captureTime >> 8);
 	midiData[3] = captureTimeA;
 	midiData[4] = captureTimeB;
 	
 	for(int j=5; j < 8; j++){
 		midiData[j] = midi_Receive();
-     3e8:	81 93       	st	Z+, r24
+     3f2:	81 93       	st	Z+, r24
 	unsigned char captureTimeA = ((captureTime << 8)>>8);
 	unsigned char captureTimeB = (captureTime >> 8);
 	midiData[3] = captureTimeA;
 	midiData[4] = captureTimeB;
 	
 	for(int j=5; j < 8; j++){
-     3ea:	81 e0       	ldi	r24, 0x01	; 1
-     3ec:	e0 38       	cpi	r30, 0x80	; 128
-     3ee:	f8 07       	cpc	r31, r24
-     3f0:	c1 f7       	brne	.-16     	; 0x3e2 <writeSong2+0x30>
+     3f4:	81 e0       	ldi	r24, 0x01	; 1
+     3f6:	e0 38       	cpi	r30, 0x80	; 128
+     3f8:	f8 07       	cpc	r31, r24
+     3fa:	c1 f7       	brne	.-16     	; 0x3ec <writeSong2+0x3a>
 		midiData[j] = midi_Receive();
 	}
 	interval = TCNT1 - captureTime;
-     3f2:	8c b5       	in	r24, 0x2c	; 44
-     3f4:	9d b5       	in	r25, 0x2d	; 45
+     3fc:	2c b5       	in	r18, 0x2c	; 44
+     3fe:	3d b5       	in	r19, 0x2d	; 45
 	unsigned char intervalA = ((interval << 8) >> 8);
 	unsigned char intervalB = (interval >> 8);
 	midiData[8] = intervalA;
-     3f6:	38 2f       	mov	r19, r24
-     3f8:	34 1b       	sub	r19, r20
-     3fa:	20 e0       	ldi	r18, 0x00	; 0
-     3fc:	23 2f       	mov	r18, r19
-     3fe:	33 0f       	add	r19, r19
-     400:	33 0b       	sbc	r19, r19
-     402:	20 83       	st	Z, r18
+     400:	92 2f       	mov	r25, r18
+     402:	94 1b       	sub	r25, r20
+     404:	80 e0       	ldi	r24, 0x00	; 0
+     406:	89 2f       	mov	r24, r25
+     408:	99 0f       	add	r25, r25
+     40a:	99 0b       	sbc	r25, r25
+     40c:	80 83       	st	Z, r24
 	midiData[9] = intervalB;
-     404:	11 82       	std	Z+1, r1	; 0x01
+     40e:	11 82       	std	Z+1, r1	; 0x01
 
-	PORTB = midiData[1];
-     406:	80 91 79 01 	lds	r24, 0x0179
-     40a:	88 bb       	out	0x18, r24	; 24
-	TCNT1 = 0;
-     40c:	1d bc       	out	0x2d, r1	; 45
-     40e:	1c bc       	out	0x2c, r1	; 44
+	
+	
 
 	for(int j= 0; j < 10; j++) {
 		EEPROM_write(eeprom_address, midiData[j]);
@@ -1006,8 +1008,8 @@ unsigned char midi_Receive(void){
      42c:	80 93 72 01 	sts	0x0172, r24
 	midiData[9] = intervalB;
 
-	PORTB = midiData[1];
-	TCNT1 = 0;
+	
+	
 
 	for(int j= 0; j < 10; j++) {
      430:	81 e0       	ldi	r24, 0x01	; 1

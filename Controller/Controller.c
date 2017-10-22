@@ -139,6 +139,8 @@ void writeSong2(){
 	for(int i =0; i <3; i++){
 		midiData[i] = midi_Receive();
 	}
+	PORTB = midiData[1];
+	TCNT1 = 0;
 	captureTime = TCNT1;
 	unsigned char captureTimeA = ((captureTime << 8)>>8);
 	unsigned char captureTimeB = (captureTime >> 8);
@@ -154,8 +156,8 @@ void writeSong2(){
 	midiData[8] = intervalA;
 	midiData[9] = intervalB;
 
-	PORTB = midiData[1];
-	TCNT1 = 0;
+	
+	
 
 	for(int j= 0; j < 10; j++) {
 		EEPROM_write(eeprom_address, midiData[j]);
