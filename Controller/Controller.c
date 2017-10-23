@@ -9,9 +9,7 @@
 int extraTime = 0, whichLED = 0, count = 0, notecount = 0, lastNoteTime = 0;
 unsigned int eeprom_address=0x00, start_addr = 0x00, stop_addr;
 uint16_t adc_value;
-uint8_t rec = PINA & 0x04;
-uint8_t play = PINA & 0x02;
-int8_t mod = PINA & 0x01;
+uint8_t rec, play, mod;
 
 #define F_CPU 4000000
 #define BUAD 31250
@@ -55,16 +53,16 @@ int main(void){
    setupAnalog();
    setupMIDI(BUAD_PRESCALE);
 
+	rec = PINA & 0x04;
+	play = PINA & 0x02;
+	mod = PINA & 0x01;
+
     while(1){
 		if(rec && !play){
 			record();
 		}
 		if(play && !rec){
-			if (mod){ // Modify Mode
-				modify();
-			}else{
-				playBack();
-			}	
+			playBack();
 		}
 		//ledOFF();
     }
@@ -111,8 +109,8 @@ void record(){
 	PORTB = midiData[1];
 	
 	interval = TCNT1;
-	unsigned char lsb = (0xFF & ((interval << 8) >> 8);
-	unsigned char msb = (0xFF & ((interval >> 8))
+	unsigned char lsb = (0xFF & ((interval << 8) >> 8));
+	unsigned char msb = (0xFF & ((interval >> 8)));
 	midiData[3] = lsb;
 	midiData[4] = msb;
 
