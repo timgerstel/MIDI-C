@@ -1,23 +1,16 @@
 Archive member included because of file (symbol)
 
-c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodhi4.o)
-                              Controller.o (__divmodhi4)
 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
                               c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o (exit)
 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
                               Controller.o (__do_clear_bss)
-c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodhi4.o)
-                              c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodhi4.o) (__udivmodhi4)
 
 Allocating common symbols
 Common symbol       size              file
 
 stop_addr           0x2               Controller.o
 adc_value           0x2               Controller.o
-mod                 0x1               Controller.o
-play                0x1               Controller.o
 midiData            0x5               Controller.o
-rec                 0x1               Controller.o
 
 Memory Configuration
 
@@ -128,7 +121,7 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x3b2
+.text           0x00000000      0x5cc
  *(.vectors)
  .vectors       0x00000000       0x54 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
                 0x00000000                __vectors
@@ -202,45 +195,42 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
                 0x00000078                __vector_16
                 0x00000078                __vector_18
                 0x00000078                __vector_20
- .text          0x0000007c      0x2e4 Controller.o
-                0x00000230                midi_Receive
+ .text          0x0000007c      0x54c Controller.o
+                0x00000146                midiTransitTest
+                0x000002ee                midi_Receive
                 0x0000007c                modify
-                0x0000033c                EEPROM_read
+                0x000005a4                EEPROM_read
                 0x0000009c                setupAnalog
                 0x000000c0                ledOFF
-                0x00000242                midi_ReadUCSRC
-                0x00000254                TIM16_WriteTCNT1
-                0x00000238                midi_Flush
+                0x00000300                midi_ReadUCSRC
+                0x00000312                TIM16_WriteTCNT1
+                0x000002f6                midi_Flush
                 0x000000c4                ReadADC
                 0x0000008c                setupPins
-                0x000002da                main
+                0x000003b8                main
                 0x000000a6                setupTimer
-                0x00000146                playBack
-                0x0000034a                __vector_8
-                0x00000248                TIM16_ReadTCNT1
+                0x000002e8                playBack
+                0x000005b2                __vector_8
+                0x00000306                TIM16_ReadTCNT1
                 0x0000013e                midi_Transmit
-                0x00000270                record
+                0x0000032e                writeSong2
+                0x00000404                eeprom_test
+                0x00000244                playSong
+                0x000003b2                record
                 0x0000007e                setupMIDI
-                0x00000260                EEPROM_write
+                0x0000031e                EEPROM_write
                 0x000000d4                analogLEDTest
- .text          0x00000360        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodhi4.o)
- .text          0x00000360        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
- .text          0x00000360        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
- .text          0x00000360        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodhi4.o)
-                0x00000360                . = ALIGN (0x2)
+ .text          0x000005c8        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .text          0x000005c8        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+                0x000005c8                . = ALIGN (0x2)
  *(.text.*)
- .text.libgcc   0x00000360       0x26 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodhi4.o)
-                0x00000360                __divmodhi4
-                0x00000360                _div
- .text.libgcc   0x00000386        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
- .text.libgcc   0x00000386        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
- .text.libgcc   0x00000386       0x28 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodhi4.o)
-                0x00000386                __udivmodhi4
-                0x000003ae                . = ALIGN (0x2)
+ .text.libgcc   0x000005c8        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .text.libgcc   0x000005c8        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+                0x000005c8                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x000003ae        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
-                0x000003ae                exit
-                0x000003ae                _exit
+ .fini9         0x000005c8        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+                0x000005c8                exit
+                0x000005c8                _exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -259,19 +249,17 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x000003ae        0x4 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .fini0         0x000005c8        0x4 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
  *(.fini0)
-                0x000003b2                _etext = .
+                0x000005cc                _etext = .
 
-.data           0x00800060        0x0 load address 0x000003b2
+.data           0x00800060        0x0 load address 0x000005cc
                 0x00800060                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00800060        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
  .data          0x00800060        0x0 Controller.o
- .data          0x00800060        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodhi4.o)
  .data          0x00800060        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
  .data          0x00800060        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
- .data          0x00800060        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodhi4.o)
  *(.data*)
  *(.rodata)
  *(.rodata*)
@@ -280,39 +268,36 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
                 0x00800060                _edata = .
                 0x00800060                PROVIDE (__data_end, .)
 
-.bss            0x00800060       0x16
+.bss            0x00800060       0x17
                 0x00800060                PROVIDE (__bss_start, .)
  *(.bss)
  .bss           0x00800060        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
- .bss           0x00800060        0xa Controller.o
-                0x00800066                eeprom_address
+ .bss           0x00800060        0xe Controller.o
+                0x0080006a                eeprom_address
                 0x00800062                whichLED
-                0x00800068                start_addr
+                0x0080006c                start_addr
+                0x00800068                lastNoteTime
                 0x00800064                count
                 0x00800060                extraTime
- .bss           0x0080006a        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodhi4.o)
- .bss           0x0080006a        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
- .bss           0x0080006a        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
- .bss           0x0080006a        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodhi4.o)
+                0x00800066                notecount
+ .bss           0x0080006e        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .bss           0x0080006e        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
  *(.bss*)
  *(COMMON)
- COMMON         0x0080006a        0xc Controller.o
-                0x0080006a                stop_addr
-                0x0080006c                adc_value
-                0x0080006e                mod
-                0x0080006f                play
-                0x00800070                midiData
-                0x00800075                rec
-                0x00800076                PROVIDE (__bss_end, .)
-                0x000003b2                __data_load_start = LOADADDR (.data)
-                0x000003b2                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x0080006e        0x9 Controller.o
+                0x0080006e                stop_addr
+                0x00800070                adc_value
+                0x00800072                midiData
+                0x00800077                PROVIDE (__bss_end, .)
+                0x000005cc                __data_load_start = LOADADDR (.data)
+                0x000005cc                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x00800076        0x0
-                0x00800076                PROVIDE (__noinit_start, .)
+.noinit         0x00800077        0x0
+                0x00800077                PROVIDE (__noinit_start, .)
  *(.noinit*)
-                0x00800076                PROVIDE (__noinit_end, .)
-                0x00800076                _end = .
-                0x00800076                PROVIDE (__heap_start, .)
+                0x00800077                PROVIDE (__noinit_end, .)
+                0x00800077                _end = .
+                0x00800077                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
  *(.eeprom*)
@@ -369,36 +354,36 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
                 0x00000000       0x20 Controller.o
 
 .debug_pubnames
-                0x00000000      0x1c9
+                0x00000000      0x20f
  *(.debug_pubnames)
  .debug_pubnames
-                0x00000000      0x1c9 Controller.o
+                0x00000000      0x20f Controller.o
 
-.debug_info     0x00000000      0x518
+.debug_info     0x00000000      0xb40
  *(.debug_info)
- .debug_info    0x00000000      0x518 Controller.o
+ .debug_info    0x00000000      0xb40 Controller.o
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev   0x00000000      0x236
+.debug_abbrev   0x00000000      0x29d
  *(.debug_abbrev)
- .debug_abbrev  0x00000000      0x236 Controller.o
+ .debug_abbrev  0x00000000      0x29d Controller.o
 
-.debug_line     0x00000000      0x579
+.debug_line     0x00000000      0xa86
  *(.debug_line)
- .debug_line    0x00000000      0x579 Controller.o
+ .debug_line    0x00000000      0xa86 Controller.o
 
-.debug_frame    0x00000000      0x150
+.debug_frame    0x00000000      0x190
  *(.debug_frame)
- .debug_frame   0x00000000      0x150 Controller.o
+ .debug_frame   0x00000000      0x190 Controller.o
 
-.debug_str      0x00000000      0x237
+.debug_str      0x00000000      0x2b6
  *(.debug_str)
- .debug_str     0x00000000      0x237 Controller.o
-                                0x26b (size before relaxing)
+ .debug_str     0x00000000      0x2b6 Controller.o
+                                0x2f0 (size before relaxing)
 
-.debug_loc      0x00000000      0x141
+.debug_loc      0x00000000      0x33f
  *(.debug_loc)
- .debug_loc     0x00000000      0x141 Controller.o
+ .debug_loc     0x00000000      0x33f Controller.o
 
 .debug_macinfo
  *(.debug_macinfo)
