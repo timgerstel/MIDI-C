@@ -52,10 +52,10 @@ int main(void){
 		play = PINA & 0x02;
 		mod = PINA & 0x01;
 	
-		if(rec && !play){
+		if(recMode() && !playMode()){
 			record();
 		}
-		if(play && !rec){
+		if(playMode() && !recMode()){
 			playBack();
 		}
 		//ledOFF();
@@ -63,8 +63,16 @@ int main(void){
 }
 /***** Main Methods *****/
 
-void modify(){
-	//analogLEDTest();
+int recMode(){
+	return (PINA & 0x04) >> 2;
+}
+
+int playMode(){
+	return (PINA & 0x02) >> 1;
+}
+
+int modMode(){
+	return (PINA & 0x01);
 }
 
 
