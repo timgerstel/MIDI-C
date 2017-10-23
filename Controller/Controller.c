@@ -3,6 +3,8 @@
 #include<interrupt.h>
 #include<eeprom.h>
 
+// Calroies = 260 + 120
+
 
 /***** Define Variables and constants *****/
 
@@ -84,7 +86,7 @@ void playBack(){
 
 
 void modify(){
-	//analogLEDTest();
+	playSongMod();
 }
 
 
@@ -207,6 +209,50 @@ void playSong(){
 		if(start_addr != 5){
 			while(TCNT1 < timeInterval);
 		}
+		
+		for(int i = 0; i < 3; i++){
+			midi_Transmit(midiData[i]);
+			if(i==1){
+				PORTB = midiData[i];
+			}
+		}
+	}
+	start_addr = 0;
+	
+}
+
+void playSongMod(){
+	
+	while(start_addr < stop_addr){
+		
+
+		for(int i = 0; i < 5; i++){
+
+			midiData[i] = EEPROM_read(start_addr);
+			start_addr++;
+			if(i==4){
+				TCNT1 = 0;
+			}
+		}
+
+		uint16_t lsb = midiData[3];
+		uint16_t msb = midiData[4];
+		uint16_t timeInterval = lsb + (0xFF00 & (msb << 8) );
+		float speedMod;
+		if(ReadADC() > 0 && ReadADC() < 180){
+			speedMod = 3;
+		}else if(ReadADC() > 180 && ReadADC() < 240){
+			speedMod = .5;
+		}
+		else{
+			speedMod = .1;
+		}
+
+		if(start_addr != 5){
+			while(TCNT1 < timeInterval*speedMod);
+		}
+
+
 		
 		for(int i = 0; i < 3; i++){
 			midi_Transmit(midiData[i]);
