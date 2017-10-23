@@ -9,6 +9,10 @@
 int extraTime = 0, whichLED = 0, count = 0, notecount = 0, lastNoteTime = 0;
 unsigned int eeprom_address=0x00, start_addr = 0x00, stop_addr;
 uint16_t adc_value;
+uint8_t rec = PINA & 0x04;
+uint8_t play = PINA & 0x02;
+int8_t mod = PINA & 0x01;
+
 #define F_CPU 4000000
 #define BUAD 31250
 #define BUAD_PRESCALE (((F_CPU / (BUAD * 16UL))) - 1)
@@ -52,10 +56,6 @@ int main(void){
    setupMIDI(BUAD_PRESCALE);
 
     while(1){
-		uint8_t rec = PINA & 0x04;
-		uint8_t play = PINA & 0x02;
-		uint8_t mod = PINA & 0x01;
-	
 		if(rec && !play){
 			record();
 		}
@@ -68,23 +68,6 @@ int main(void){
 		}
 		//ledOFF();
     }
-}
-/***** Main Methods *****/
-
-void record(){
-	 writeSong2();
-	//midiTransitTest();
-}
-
-void playBack(){
-	//midiTransitTest();
-	//eeprom_test();
-	playSong();
-}
-
-
-void modify(){
-	//analogLEDTest();
 }
 
 
@@ -119,43 +102,7 @@ void setupTimer(){
 }
 
 /***** Create Methods *****/
-
-
-
-
-
-void eeprom_test(){
-	EEPROM_write(1, 1);
-	EEPROM_write(2, 2);
-	EEPROM_write(3, 3);
-	EEPROM_write(4, 4);
-	EEPROM_write(5, 5);
-	EEPROM_write(6, 6);
-	EEPROM_write(7, 7);
-	EEPROM_write(8, 8);
-	EEPROM_write(9, 9);
-	PORTB = EEPROM_read(1);
-	_delay_ms(500);
-	PORTB = EEPROM_read(2);
-	_delay_ms(500);
-	PORTB = EEPROM_read(3);
-	_delay_ms(500);
-	PORTB = EEPROM_read(4);
-	_delay_ms(500);
-	PORTB = EEPROM_read(5);
-	_delay_ms(500);
-	PORTB = EEPROM_read(6);
-	_delay_ms(500);
-	PORTB = EEPROM_read(7);
-	_delay_ms(500);
-	PORTB = EEPROM_read(8);
-	_delay_ms(500);
-	PORTB = EEPROM_read(9);
-	_delay_ms(500);
-}
-
-
-void writeSong2(){
+void record(){
 	unsigned int interval;
 	TCNT1 = 0;
 	for(int i = 0; i <3; i++){
@@ -177,44 +124,19 @@ void writeSong2(){
 	
 }
 
-void playSong(){
+void playBack(){
 	
 	while(start_addr < stop_addr){
-		// for(int i = 0; i < 3; i++){
-		// 	midiData[i] = EEPROM_read(start_addr);
-		// 	midi_Transmit(EEPROM_read(start_addr));
-		// 	start_addr++;
-		// }
-		// PORTB = midiData[1];
-		// //TODO: create capture time method
-		// unsigned char captureAddrA = start_addr;
-		// unsigned char captureAddrB = start_addr + 1;
-		// unsigned char captureTimed = captureAddrA | ( captureAddrB << 8);
-		// int pushDownDelay = (captureTimed*(1/3906.25));
-		// _delay_ms(pushDownDelay);
-
-		// start_addr = start_addr + 2;
-		// for(int j = 5; j < 8; j++){
-		// 	midi_Transmit(EEPROM_read(start_addr));
-		// 	start_addr++;
-		// }
-		// unsigned char intervalAddrA = start_addr;
-		// unsigned char intervalAddrB = start_addr + 1;
-		// unsigned char intervalTimed = captureAddrA | ( captureAddrB << 8);
-		// int pushUpDelay = (intervalTimed*(1/3906.25));
-		// _delay_ms(pushUpDelay);
-
-		// start_addr = start_addr + 2;
 		for(int i = 0; i < 5; i++){
 			midiData[i] = EEPROM_read(start_addr);
 			start_addr++;
 		}
 		unsigned char lsb = midiData[3];
 		unsigned char msb = midiData[4];
-		//0b111110100 = 500 ms
-		//1953.125 ticks = 500 ms;
-		//TICKS * (1/3906.25) = time in ms
 		unsigned int interval = ((0x00FF & msb) << 8) + lsb;
+		if(mod){
+			interval = interval / ReadADC();
+		}
 		TCNT1 = 0;
 		while(TCNT1 < interval);
 		for(int i = 0; i < 3; i++){
@@ -224,39 +146,6 @@ void playSong(){
 	start_addr = 0;
 	
 }
-
-void midiTransitTest(){
-	midi_Transmit(144);
-	midi_Transmit(67);
-	midi_Transmit(100);
-	_delay_ms(500);
-	midi_Transmit(128);
-	midi_Transmit(67);
-	midi_Transmit(100);
-	_delay_ms(500);
-
-	midi_Transmit(144);
-	midi_Transmit(98);
-	midi_Transmit(100);
-	_delay_ms(500);
-	midi_Transmit(128);
-	midi_Transmit(98);
-	midi_Transmit(100);
-	_delay_ms(500);
-	
-
-	midi_Transmit(144);
-	midi_Transmit(60);
-	midi_Transmit(100);
-	_delay_ms(500);
-	midi_Transmit(128);
-	midi_Transmit(60);
-	midi_Transmit(100);
-	_delay_ms(500);
-
-}
-
-
 
 void ledOFF(){
 	PORTB = 0x00;
