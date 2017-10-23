@@ -132,7 +132,7 @@ void record(){
 }
 
 void playBack(){
-	while(start_addr < stop_addr && playMode){
+	while(start_addr < stop_addr){
 		for(int i = 0; i < 5; i++){
 			midiData[i] = EEPROM_read(start_addr);
 			start_addr++;
