@@ -48,14 +48,12 @@ int main(void){
    setupMIDI(BUAD_PRESCALE);
 
     while(1){
-		rec = PINA & 0x04;
-		play = PINA & 0x02;
-		mod = PINA & 0x01;
 	
-		if(recMode() && !playMode()){
+		if(recMode() == 1 && playMode() == 0){
+			PINA = 0x02;
 			record();
 		}
-		if(playMode() && !recMode()){
+		if(playMode() == 1 && recMode() == 0){
 			playBack();
 		}
 		//ledOFF();
