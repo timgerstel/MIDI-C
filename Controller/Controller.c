@@ -60,13 +60,14 @@ int main(void){
 	
 		if(rec && !play){
 			record();
-		}
-		if(play && !rec){
+		} else if(play && !rec){
 			if (mod){ // Modify Mode
 				modify();
 			}else{
 				playBack();
 			}	
+		} else {
+			ledOFF();
 		}
 		
     }
@@ -214,8 +215,9 @@ void playSong(){
 			midi_Transmit(midiData[i]);
 			if(i==1){
 				PORTB = midiData[i];
-			}
+			}		
 		}
+		
 	}
 	start_addr = 0;
 	
@@ -345,7 +347,7 @@ void analogLEDTest(){
 
 void midi_Transmit( unsigned char data){
 	/* Wait for empty transmit buffer */
-	while(!(UCSRA & (1 << UDRE)) ) ;
+	while((PINA & 0x02) && !(UCSRA & (1 << UDRE)) ) ;
 
 	/* Put data into buffer, sends the data */
 	UDR = data;
