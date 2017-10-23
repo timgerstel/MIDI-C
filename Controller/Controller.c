@@ -190,7 +190,7 @@ void writeSong2(){
 
 void playSong(){
 	
-	while(start_addr < stop_addr){
+	while(start_addr < stop_addr && (PINA & 0x02) ){
 		
 
 		for(int i = 0; i < 5; i++){
