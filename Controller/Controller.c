@@ -68,6 +68,8 @@ int main(void){
 			}	
 		} else {
 			ledOFF();
+			eeprom_address = 0x00;
+			midi_Flush();
 		}
 		
     }
