@@ -66,7 +66,7 @@ int main(void){
 				playBack();
 			}	
 		}
-		//ledOFF();
+		
     }
 }
 /***** Main Methods *****/
@@ -156,7 +156,6 @@ void eeprom_test(){
 
 
 void writeSong2(){
-	unsigned int interval;
 	uint8_t lsb;
 	uint8_t msb;
 	for(int i = 0; i <3; i++){
@@ -193,15 +192,22 @@ void playSong(){
 		
 
 		for(int i = 0; i < 5; i++){
+
 			midiData[i] = EEPROM_read(start_addr);
 			start_addr++;
+			if(i==4){
+				TCNT1 = 0;
+			}
 		}
 
 		uint16_t lsb = midiData[3];
 		uint16_t msb = midiData[4];
 		uint16_t timeInterval = lsb + (0xFF00 & (msb << 8) );
-		TCNT1 = 0;
-		while(TCNT1 < timeInterval);
+		
+		if(start_addr != 5){
+			while(TCNT1 < timeInterval);
+		}
+		
 		for(int i = 0; i < 3; i++){
 			midi_Transmit(midiData[i]);
 			if(i==1){
@@ -301,7 +307,7 @@ void midi_Transmit( unsigned char data){
 
 unsigned char midi_Receive(void){
 	/* Wait for data to be recieved */
-	while(!(UCSRA & (1<<RXC)));
+	while( (PINA&0x04)&&(!(UCSRA & (1<<RXC)) ));
 
 	/* get and return data from buffer */
 	return UDR;
