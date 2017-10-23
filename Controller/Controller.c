@@ -131,9 +131,19 @@ void playBack(){
 		}
 		unsigned char lsb = midiData[3];
 		unsigned char msb = midiData[4];
+
 		unsigned int interval;
 		if(mod){
-			interval = (((0x00FF & msb) << 8) + lsb) / ReadADC();
+			int speedMod;
+			if(ReadADC() > 90){
+				 speedMod = 4;
+			}else if (ReadADC() > 180){
+				speedMod = 2.5;
+			}else {
+				speedMod = .2;
+			}
+
+			interval = (((0x00FF & msb) << 8) + lsb) / speedMod;
 		} else {
 			interval = ((0x00FF & msb) << 8) + lsb;
 		}
