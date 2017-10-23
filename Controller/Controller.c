@@ -89,7 +89,8 @@ void playBack(){
 
 
 void modify(){
-	playSongMod();
+	//analogLEDTest();
+	playSong();
 }
 
 
@@ -194,7 +195,7 @@ void writeSong2(){
 void playSong(){
 	
 	while(start_addr < stop_addr && (PINA & 0x02) ){
-		
+		float speedMod = 1;
 
 		for(int i = 0; i < 5; i++){
 
@@ -208,9 +209,23 @@ void playSong(){
 		uint16_t lsb = midiData[3];
 		uint16_t msb = midiData[4];
 		uint16_t timeInterval = lsb + (0xFF00 & (msb << 8) );
+		if((PINA & 0x02 ) && (PINA & 0x01)){
+
+		if(ReadADC() > 0 && ReadADC() < 60){
+			speedMod = 3;
+		}else if(ReadADC() > 60 && ReadADC() < 200){
+			speedMod = .5;
+		}
+		else if(ReadADC() > 200){
+			speedMod = .1;
+		}
+		}else{
+			speedMod = 1;
+		}
 		
+
 		if(start_addr != 5){
-			while(TCNT1 < timeInterval);
+			while(TCNT1 < timeInterval * speedMod);
 		}
 		
 		for(int i = 0; i < 3; i++){
@@ -243,9 +258,9 @@ void playSongMod(){
 		uint16_t msb = midiData[4];
 		uint16_t timeInterval = lsb + (0xFF00 & (msb << 8) );
 		float speedMod;
-		if(ReadADC() > 0 && ReadADC() < 180){
+		if(ReadADC() > 0 && ReadADC() < 60){
 			speedMod = 3;
-		}else if(ReadADC() > 180 && ReadADC() < 240){
+		}else if(ReadADC() > 60 && ReadADC() < 200){
 			speedMod = .5;
 		}
 		else{
@@ -318,31 +333,58 @@ uint16_t ReadADC(){
 
 void analogLEDTest(){
 		adc_value = ReadADC();
-		if (adc_value > 30){
-			PORTB = (1 << PORTB0);
+		if (adc_value > 20){
+			PORTB = (0b00000001);
+		}
+		if (adc_value > 40){
+			PORTB = (0b00000011);
 		}
 		if (adc_value > 60){
-			PORTB = (1 << PORTB1);
+			PORTB = (0b00000111);
 		}
-		if (adc_value > 90){
-			PORTB = (1 << PORTB2);
+		if (adc_value > 80){
+			PORTB = (0b00001111);
+		}
+		if (adc_value > 100){
+			PORTB = (0b00011111);
 		}
 		if (adc_value > 120){
-			PORTB = (1 << PORTB3);
+			PORTB = (0b00111111);
 		}
-		if (adc_value > 150){
-			PORTB = (1 << PORTB4);
+		if (adc_value > 140){
+			PORTB = (0b01111111);
+		}
+		if (adc_value > 160){
+			PORTB = (0b11111111);
 		}
 		if (adc_value > 180){
-			PORTB = (1 << PORTB5);
+			PORTB = (0b10000000);
 		}
-		if (adc_value > 210){
-			PORTB = (1 << PORTB6);
+		if (adc_value > 200){
+			PORTB = (0b11000000);
+		}
+		if (adc_value > 220){
+			PORTB = (0b11100000);
 		}
 		if (adc_value > 240){
-			PORTB = (1 << PORTB7);
+			PORTB = (0b11110000);
 		}
-		if (adc_value >= 240){
+		if (adc_value > 260){
+			PORTB = (0b11111000);
+		}
+		if (adc_value > 280){
+			PORTB = (0b11111100);
+		}
+		if (adc_value > 300){
+			PORTB = (0b11111110);
+		}
+		if (adc_value > 320){
+			PORTB = (0b01010101);
+		}
+		if (adc_value > 340){
+			PORTB = (0b10101010);
+		}
+		if (adc_value >= 340){
 			PORTB = 0xFF;
 		}
 	}
