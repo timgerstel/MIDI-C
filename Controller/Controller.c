@@ -52,6 +52,7 @@ int main(void){
 
     while(1){	
 		if(recMode && !playMode){
+			eeprom_address = 0x00;
 			record();
 		}
 		if(playMode && !recMode){
@@ -131,7 +132,7 @@ void record(){
 }
 
 void playBack(){
-	while(start_addr < stop_addr && playMode()){
+	while(start_addr < stop_addr && playMode){
 		for(int i = 0; i < 5; i++){
 			midiData[i] = EEPROM_read(start_addr);
 			start_addr++;
@@ -221,7 +222,7 @@ void midi_Transmit( unsigned char data){
 
 unsigned char midi_Receive(void){
 	/* Wait for data to be recieved */
-	while(!(UCSRA & (1<<RXC)) && (recMode && !playMode));
+	while(!(UCSRA & (1<<RXC)));
 
 	/* get and return data from buffer */
 	return UDR;
