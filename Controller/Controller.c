@@ -13,6 +13,9 @@ uint16_t adc_value;
 #define F_CPU 4000000
 #define BUAD 31250
 #define BUAD_PRESCALE (((F_CPU / (BUAD * 16UL))) - 1)
+#define playMode (PINA & 0x02)
+#define recMode (PINA & 0x04)
+#define modMode (PINA & 0x01)
 
 /* Midi test inputs */
 unsigned char midiData[5];
@@ -47,13 +50,11 @@ int main(void){
    setupAnalog();
    setupMIDI(BUAD_PRESCALE);
 
-    while(1){
-	
-		if(recMode() == 1 && playMode() == 0){
-			PINA = 0x02;
+    while(1){	
+		if(recMode && !playMode){
 			record();
 		}
-		if(playMode() == 1 && recMode() == 0){
+		if(playMode && !recMode){
 			playBack();
 		}
 		//ledOFF();
@@ -61,17 +62,17 @@ int main(void){
 }
 /***** Main Methods *****/
 
-int recMode(){
-	return (PINA & 0x04) >> 2;
-}
+// int recMode(){
+// 	return (PINA & 0x04) >> 2;
+// }
 
-int playMode(){
-	return (PINA & 0x02) >> 1;
-}
+// int playMode(){
+// 	return (PINA & 0x02) >> 1;
+// }
 
-int modMode(){
-	return (PINA & 0x01);
-}
+// int modMode(){
+// 	return (PINA & 0x01);
+// }
 
 
 /***** Setup Methods *****/
@@ -130,7 +131,7 @@ void record(){
 }
 
 void playBack(){
-	while(start_addr < stop_addr){
+	while(start_addr < stop_addr && playMode()){
 		for(int i = 0; i < 5; i++){
 			midiData[i] = EEPROM_read(start_addr);
 			start_addr++;
@@ -220,7 +221,7 @@ void midi_Transmit( unsigned char data){
 
 unsigned char midi_Receive(void){
 	/* Wait for data to be recieved */
-	while(!(UCSRA & (1<<RXC)));
+	while(!(UCSRA & (1<<RXC)) && (recMode && !playMode));
 
 	/* get and return data from buffer */
 	return UDR;
