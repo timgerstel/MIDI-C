@@ -56,11 +56,7 @@ int main(void){
 			record();
 		}
 		if(play && !rec){
-			if (mod){ // Modify Mode
-				modify();
-			}else{
-				playBack();
-			}	
+			playBack();
 		}
 		//ledOFF();
     }
@@ -135,9 +131,11 @@ void playBack(){
 		}
 		unsigned char lsb = midiData[3];
 		unsigned char msb = midiData[4];
-		unsigned int interval = ((0x00FF & msb) << 8) + lsb;
+		unsigned int interval;
 		if(mod){
-			interval = interval / ReadADC();
+			interval = (((0x00FF & msb) << 8) + lsb) / ReadADC();
+		} else {
+			interval = ((0x00FF & msb) << 8) + lsb;
 		}
 		TCNT1 = 0;
 
