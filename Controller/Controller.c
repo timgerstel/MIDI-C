@@ -156,7 +156,7 @@ void eeprom_test(){
 
 
 void writeSong2(){
-	unsigned int interval = TCNT1;
+	unsigned int interval;
 	TCNT1 = 0;
 	for(int i = 0; i <3; i++){
 		midiData[i] = midi_Receive();
@@ -164,8 +164,8 @@ void writeSong2(){
 	PORTB = midiData[1];
 	
 	interval = TCNT1;
-	unsigned char lsb = ((interval << 8) >> 8);
-	unsigned char msb = ((interval >> 8));
+	unsigned char lsb = (0xFF & ((interval << 8) >> 8);
+	unsigned char msb = (0xFF & ((interval >> 8))
 	midiData[3] = lsb;
 	midiData[4] = msb;
 
