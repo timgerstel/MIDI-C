@@ -3,17 +3,14 @@
 #include<interrupt.h>
 #include<eeprom.h>
 
-// Calroies = 260 + 120
-
-
 /***** Define Variables and constants *****/
 
 int extraTime = 0, whichLED = 0, count = 0, notecount = 0, lastNoteTime = 0;
 unsigned int eeprom_address=0x00, start_addr = 0x00, stop_addr;
 uint16_t adc_value;
 #define F_CPU 4000000
-#define BUAD 31250
-#define BUAD_PRESCALE (((F_CPU / (BUAD * 16UL))) - 1)
+#define BAUD 31250
+#define BAUD_PRESCALE (((F_CPU / (BAUD * 16UL))) - 1)
 
 /* Midi test inputs */
 unsigned char midiData[5];
@@ -28,11 +25,8 @@ void record();
 void playBack();
 void modify();
 
-void midiTransitTest();
-void wait(int time);
 void ledOFF();
 uint16_t ReadADC();
-void analogLEDTest();
 void midi_transmit(unsigned char data);
 unsigned char midi_Receive(void);
 void midi_Flush(void);
@@ -40,10 +34,9 @@ unsigned char midi_ReadUCSRC(void);
 void EEPROM_write(unsigned int uiAddress, unsigned char ucData);
 unsigned char EEPROM_read(unsigned int uiAddress);
 void midiReceiveTest();
-void timer500();
 unsigned char TIM16_ReadTCNT1(void);
 void playSong();
-void playSong2();
+void writeSong2();
 
 
 /***** Main Loop *****/
@@ -51,7 +44,7 @@ int main(void){
    setupPins();
    setupTimer();
    setupAnalog();
-   setupMIDI(BUAD_PRESCALE);
+   setupMIDI(BAUD_PRESCALE);
 
     while(1){
 		uint8_t rec = PINA & 0x04;
@@ -64,6 +57,7 @@ int main(void){
 			if (mod){ // Modify Mode
 				modify();
 			}else{
+
 				playBack();
 			}	
 		} else {
@@ -89,7 +83,6 @@ void playBack(){
 
 
 void modify(){
-	//analogLEDTest();
 	playSong();
 }
 
@@ -103,7 +96,7 @@ void setupMIDI(unsigned int baudrate){
 	UCSRC = (1 << URSEL )|(0 << USBS) | (3 << UCSZ0); //only use 8 bit words
 }
 void setupPins(){
-	DDRB = 0xFF;  //Set outp1ts
+	DDRB = 0xFF;  //Set outputs
 	DDRA = 0x00;  //Set inputs
 	PORTB = 0x00; //Turns all leds off
 	PORTA = 0x07; // sets inputs to return 5v on PA0, PA1, PA2
@@ -118,48 +111,13 @@ void setupTimer(){
 	TCCR1B = (1 << CS10) | (1 << CS12); //prescaler 1024
 	TIMSK = (1 << OCIE1B);
 	sei();
-	//OCR1A = 3906; // 1000ms delay  equation = (500*10^-3/(1/3906.25));
+	//OCR1A = 3906; // 1000ms delay  equation = (1000*10^-3/(1/3906.25));
 	OCR1B = 1952; // 500ms Delay (note this causes the leds to turn off after button press)
 	TCNT1 = 0;
 
 }
 
 /***** Create Methods *****/
-
-
-
-
-
-void eeprom_test(){
-	EEPROM_write(1, 1);
-	EEPROM_write(2, 2);
-	EEPROM_write(3, 3);
-	EEPROM_write(4, 4);
-	EEPROM_write(5, 5);
-	EEPROM_write(6, 6);
-	EEPROM_write(7, 7);
-	EEPROM_write(8, 8);
-	EEPROM_write(9, 9);
-	PORTB = EEPROM_read(1);
-	_delay_ms(500);
-	PORTB = EEPROM_read(2);
-	_delay_ms(500);
-	PORTB = EEPROM_read(3);
-	_delay_ms(500);
-	PORTB = EEPROM_read(4);
-	_delay_ms(500);
-	PORTB = EEPROM_read(5);
-	_delay_ms(500);
-	PORTB = EEPROM_read(6);
-	_delay_ms(500);
-	PORTB = EEPROM_read(7);
-	_delay_ms(500);
-	PORTB = EEPROM_read(8);
-	_delay_ms(500);
-	PORTB = EEPROM_read(9);
-	_delay_ms(500);
-}
-
 
 void writeSong2(){
 	uint8_t lsb;
@@ -177,23 +135,15 @@ void writeSong2(){
 	PORTB = midiData[1];
 	
 	
-	// interval = TCNT1;
-	// unsigned char lsb = (0xFF & ((interval << 8) >> 8));
-	// unsigned char msb = (0xFF & ((interval >> 8)));
-	// midiData[3] = lsb;
-	// midiData[4] = msb;
-
-	stop_addr = eeprom_address;
 	for(int j= 0; j < 5; j++){
 		EEPROM_write(eeprom_address, midiData[j]);
 		eeprom_address++;		
 	}
-	
+	stop_addr = eeprom_address;
 	
 }
 
 void playSong(){
-	
 	while(start_addr < stop_addr && (PINA & 0x02) ){
 		float speedMod = 1;
 
@@ -240,83 +190,6 @@ void playSong(){
 	
 }
 
-void playSongMod(){
-	
-	while(start_addr < stop_addr){
-		
-
-		for(int i = 0; i < 5; i++){
-
-			midiData[i] = EEPROM_read(start_addr);
-			start_addr++;
-			if(i==4){
-				TCNT1 = 0;
-			}
-		}
-
-		uint16_t lsb = midiData[3];
-		uint16_t msb = midiData[4];
-		uint16_t timeInterval = lsb + (0xFF00 & (msb << 8) );
-		float speedMod;
-		if(ReadADC() > 0 && ReadADC() < 60){
-			speedMod = 3;
-		}else if(ReadADC() > 60 && ReadADC() < 200){
-			speedMod = .5;
-		}
-		else{
-			speedMod = .1;
-		}
-
-		if(start_addr != 5){
-			while(TCNT1 < timeInterval*speedMod);
-		}
-
-
-		
-		for(int i = 0; i < 3; i++){
-			midi_Transmit(midiData[i]);
-			if(i==1){
-				PORTB = midiData[i];
-			}
-		}
-	}
-	start_addr = 0;
-	
-}
-
-void midiTransitTest(){
-	midi_Transmit(144);
-	midi_Transmit(67);
-	midi_Transmit(100);
-	_delay_ms(500);
-	midi_Transmit(128);
-	midi_Transmit(67);
-	midi_Transmit(100);
-	_delay_ms(500);
-
-	midi_Transmit(144);
-	midi_Transmit(98);
-	midi_Transmit(100);
-	_delay_ms(500);
-	midi_Transmit(128);
-	midi_Transmit(98);
-	midi_Transmit(100);
-	_delay_ms(500);
-	
-
-	midi_Transmit(144);
-	midi_Transmit(60);
-	midi_Transmit(100);
-	_delay_ms(500);
-	midi_Transmit(128);
-	midi_Transmit(60);
-	midi_Transmit(100);
-	_delay_ms(500);
-
-}
-
-
-
 void ledOFF(){
 	PORTB = 0x00;
 }
@@ -331,63 +204,7 @@ uint16_t ReadADC(){
 	return(ADC);
 }
 
-void analogLEDTest(){
-		adc_value = ReadADC();
-		if (adc_value > 20){
-			PORTB = (0b00000001);
-		}
-		if (adc_value > 40){
-			PORTB = (0b00000011);
-		}
-		if (adc_value > 60){
-			PORTB = (0b00000111);
-		}
-		if (adc_value > 80){
-			PORTB = (0b00001111);
-		}
-		if (adc_value > 100){
-			PORTB = (0b00011111);
-		}
-		if (adc_value > 120){
-			PORTB = (0b00111111);
-		}
-		if (adc_value > 140){
-			PORTB = (0b01111111);
-		}
-		if (adc_value > 160){
-			PORTB = (0b11111111);
-		}
-		if (adc_value > 180){
-			PORTB = (0b10000000);
-		}
-		if (adc_value > 200){
-			PORTB = (0b11000000);
-		}
-		if (adc_value > 220){
-			PORTB = (0b11100000);
-		}
-		if (adc_value > 240){
-			PORTB = (0b11110000);
-		}
-		if (adc_value > 260){
-			PORTB = (0b11111000);
-		}
-		if (adc_value > 280){
-			PORTB = (0b11111100);
-		}
-		if (adc_value > 300){
-			PORTB = (0b11111110);
-		}
-		if (adc_value > 320){
-			PORTB = (0b01010101);
-		}
-		if (adc_value > 340){
-			PORTB = (0b10101010);
-		}
-		if (adc_value >= 340){
-			PORTB = 0xFF;
-		}
-	}
+
 
 void midi_Transmit( unsigned char data){
 	/* Wait for empty transmit buffer */
@@ -455,9 +272,6 @@ void EEPROM_write(unsigned int uiAddress, unsigned char ucData){
 	EEAR = uiAddress;
 	EEDR = ucData;
 
-	//char cSREG;
-	//cSREG = SREG;
-	//cli();
 
 	/* Write logical one to EEMWE */
 	EECR |= (1 << EEMWE);
@@ -471,9 +285,6 @@ unsigned char EEPROM_read(unsigned int uiAddress){
 	while(EECR & (1<< EEWE));
 	/* Set up address register */
 	EEAR = uiAddress;
-	//char cSREG;
-	//cSREG = SREG;
-	//cli();
 	/* Start eeprom read by writing EERE */
 	EECR |= (1<< EERE);
 	/* Return data from data register */
